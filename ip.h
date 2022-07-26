@@ -3,6 +3,6 @@
 
 #include "type.h"
 
-void set_ip(struct ip_hdr *iph,struct ip_args *ipa);
+void set_ip(struct ip_hdr *iph, struct ip_args *ipa);
 
 #endif
