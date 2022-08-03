@@ -23,11 +23,6 @@ struct icmp_hdr {
 	unsigned short id;
 	unsigned short seq;
 };
-struct icmp_args {
-	unsigned char type;
-	unsigned char code;
-	unsigned short seq;
-};
 
 struct tcp_hdr {
 	unsigned short src;
