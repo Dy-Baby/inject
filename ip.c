@@ -8,20 +8,19 @@
 void set_ip(struct ip_hdr *iph, unsigned int src, unsigned int dst,
 		unsigned char ttl, unsigned char protocol)
 {
+	iph->length = sizeof(struct ip_hdr);
 	switch (protocol) {
 	case IPPROTO_ICMP:
-		iph->length = sizeof(struct ip_hdr) + sizeof(struct icmp_hdr);
+		iph->length += sizeof(struct icmp_hdr);
 		break;
 	case IPPROTO_TCP:
-		iph->length = sizeof(struct ip_hdr) + sizeof(struct tcp_hdr);
+		iph->length += sizeof(struct tcp_hdr);
 		break;
 	case IPPROTO_UDP:
-		iph->length = sizeof(struct ip_hdr) + sizeof(struct tcp_hdr);
-		break;
-	default:
-		iph->length = sizeof(struct ip_hdr);
+		iph->length += sizeof(struct tcp_hdr);
 		break;
 	}
+
 	iph->ver_ihl = 0x45;
 	iph->service = 0x00;
 	iph->ident = 0x00;
