@@ -35,13 +35,6 @@ struct tcp_hdr {
 	unsigned short check;
 	unsigned short urgp;
 };
-struct tcp_args {
-	unsigned short src;
-	unsigned short dst;
-	unsigned char flag;
-	unsigned int seq;
-	unsigned int ack;
-};
 
 struct udp_hdr {
 	unsigned short src;

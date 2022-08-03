@@ -29,14 +29,17 @@ unsigned short tcp_check(struct tcp_hdr *tcph, struct ip_hdr *iph)
 	return check;
 }
 
-void set_tcp(struct tcp_hdr *tcph, struct tcp_args *tcpa, struct ip_hdr *iph)
+void set_tcp(struct tcp_hdr *tcph, struct ip_hdr *iph,
+		unsigned short src, unsigned short dst,
+		unsigned char flag, unsigned int seq,
+		unsigned int ack)
 {
-	tcph->src = tcpa->src;
-	tcph->dst = tcpa->dst;
-	tcph->seq = tcpa->seq;
-	tcph->ack = tcpa->ack;
+	tcph->src = src;
+	tcph->dst = dst;
+	tcph->seq = seq;
+	tcph->ack = ack;
 	tcph->len_res = 0x50;
-	tcph->flag = tcpa->flag;
+	tcph->flag = flag;
 	tcph->win = 0x0fff;
 	tcph->check = 0;
 	tcph->urgp = 0x0;
