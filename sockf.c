@@ -17,8 +17,8 @@ int init_socket()
 			__LINE__, strerror(errno));
 		return errno;
 	}
-	if (setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &enable, sizeof(int)) <
-	    0) {
+	if (setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL,
+			&enable, sizeof(int)) < 0) {
 		fprintf(stderr, "[ERROR] [file:%s] [line:%d] : %s\n", __FILE__,
 			__LINE__, strerror(errno));
 		return errno;
