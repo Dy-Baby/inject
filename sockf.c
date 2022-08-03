@@ -1,10 +1,11 @@
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <errno.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
 #include "sockf.h"
 
 int init_socket()
@@ -28,5 +29,8 @@ int init_socket()
 
 void close_sock(int sockfd)
 {
-	close(sockfd);
+	if (close(sockfd) == -1)
+		fprintf(stderr, "[ERROR] [file:%s] [line:%d] : %s\n", __FILE__,
+			__LINE__, strerror(errno));
+
 }
