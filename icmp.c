@@ -11,6 +11,5 @@ void set_icmp(struct icmp_hdr *icmph, struct icmp_args *icmpa)
 	icmph->seq = icmpa->seq;
 	icmph->id = htons(getpid());
 	icmph->check = 0;
-	icmph->check =
-		checksum((unsigned short *)icmph, sizeof(struct icmp_hdr));
+	icmph->check = checksum((unsigned short *)icmph, sizeof(struct icmp_hdr));
 }
