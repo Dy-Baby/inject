@@ -49,10 +49,6 @@ struct udp_hdr {
 	unsigned short length;
 	unsigned short check;
 };
-struct udp_args {
-	unsigned short src;
-	unsigned short dst;
-};
 
 struct psd_hdr {
 	unsigned int src;
