@@ -32,5 +32,4 @@ void close_sock(int sockfd)
 	if (close(sockfd) == -1)
 		fprintf(stderr, "[ERROR] [file:%s] [line:%d] : %s\n", __FILE__,
 			__LINE__, strerror(errno));
-
 }
