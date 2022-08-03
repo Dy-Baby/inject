@@ -15,12 +15,6 @@ struct ip_hdr {
 	unsigned int src;
 	unsigned int dst;
 };
-struct ip_args {
-	unsigned int src;
-	unsigned int dst;
-	unsigned char ttl;
-	unsigned char protocol;
-};
 
 struct icmp_hdr {
 	unsigned char type;
