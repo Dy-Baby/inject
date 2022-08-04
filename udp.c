@@ -8,25 +8,25 @@
 
 unsigned short udp_check(struct udp_hdr *udph, struct ip_hdr *iph)
 {
-	struct psd_hdr psh;
-	char *psd;
-	unsigned short check;
+       struct psd_hdr psh;
+       char *psd;
+       unsigned short check;
 
-	psh.src = iph->src;
-	psh.dst = iph->dst;
-	psh.placeholder = 0;
-	psh.protocol = IPPROTO_UDP;
-	psh.length = htons(sizeof(struct udp_hdr));
+       psh.src = iph->src;
+       psh.dst = iph->dst;
+       psh.placeholder = 0;
+       psh.protocol = IPPROTO_UDP;
+       psh.length = htons(sizeof(struct udp_hdr));
 
-	psd = malloc(sizeof(struct udp_hdr) + sizeof(struct psd_hdr));
-	memcpy(psd, (char *)&psh, sizeof(struct psd_hdsr));
-	memcpy(psd + sizeof(struct psd_hdr), udph, sizeof(struct udp_hdr));
+       psd = malloc(sizeof(struct udp_hdr) + sizeof(struct psd_hdr));
+       memcpy(psd, (char *)&psh, sizeof(struct psd_hdr));
+       memcpy(psd + sizeof(struct psd_hdr), udph, sizeof(struct udp_hdr));
 
-	check = checksum((unsigned short *)psd,
-			sizeof(struct udp_hdr) + sizeof(struct psd_hdr));
-	free(psd);
+       check = checksum((unsigned short *)psd,
+                        sizeof(struct udp_hdr) + sizeof(struct psd_hdr));
+       free(psd);
 
-	return check;
+       return check;
 }
 
 void set_udp(struct udp_hdr *udph, struct ip_hdr *iph,

@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include "sockf.h"
+#include "error_func.h"
 
 int init_socket()
 {
