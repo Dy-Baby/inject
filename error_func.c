@@ -5,5 +5,5 @@
 
 void err_msg(char *err_text, int err)
 {
-	fprintf(stderr, "[ERROR] [%s] : %s", err_text, strerror(err));
+	fprintf(stderr, "[ERROR] [%s] : %s\n", err_text, strerror(err));
 }
