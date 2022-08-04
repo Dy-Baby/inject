@@ -3,6 +3,6 @@ Packet Crafter
 
 #### TODO:
 * [X] Remove packet argument structs.
-* [ ] Implement UDP.
+* [X] Implement UDP.
 * [ ] Write the main program.
 * [ ] Write documentation.
