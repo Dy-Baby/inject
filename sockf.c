@@ -13,14 +13,12 @@ int init_socket()
 	int sockfd, enable = 1;
 
 	if ((sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)) < 0) {
-		fprintf(stderr, "[ERROR] [file:%s] [line:%d] : %s\n", __FILE__,
-			__LINE__, strerror(errno));
+		err_msg("sockf.c/socket", errno);
 		return errno;
 	}
 	if (setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL,
 			&enable, sizeof(int)) < 0) {
-		fprintf(stderr, "[ERROR] [file:%s] [line:%d] : %s\n", __FILE__,
-			__LINE__, strerror(errno));
+		err_msg("sockf.c/setsockopt", errno);
 		return errno;
 	}
 
@@ -30,6 +28,5 @@ int init_socket()
 void close_sock(int sockfd)
 {
 	if (close(sockfd) == -1)
-		fprintf(stderr, "[ERROR] [file:%s] [line:%d] : %s\n", __FILE__,
-			__LINE__, strerror(errno));
+		err_msg("sockf.c/close_sock", errno);
 }
