@@ -18,15 +18,15 @@ Inject is a Raw Socket packet crafter.
 
 ### Example Usages
 * ICMP echo request :
-    `./inject icmp -s (source address) -d (destination address) -t 8`
+    `./inject icmp -s 192.168.1.50 -d 192.168.1.1 -t 8`
 
 * TCP syn packet :
-     `./inject tcp -s (source address) -d (destination address) -o (source port) - p (destination port) -f syn`
+     `./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 - p 80 -f syn`
 > you can use multiple flags together.
 
 * TCP syn, ack packet
-     `./inject tcp -s (source address) -d (destination address) -o (source port) - p (destination port) -f syn -f ack`
+     `./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 - p 80 -f syn -f ack`
 
 * UDP packet
-     `./inject tcp -s (source address) -d (destination address) -o (source port) - p (destination port)`
+     `./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 - p 4000`
 
