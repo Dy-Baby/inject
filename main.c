@@ -56,35 +56,40 @@ void inject()
 	send_data(sockfd, buffer, iph->length, &sock_dst);
 }
 
+void print_usage()
+{
+       printf("\n usage : ./inject [protocol] [options]\n\n\
+protocol :\n\
+\tip : ip packets\n\
+\ticmp : icmp packets\n\
+\ttcp : tcp packets\n\
+\tudp : udp packets\n\n\
+options :\n\
+\t-s : source ip address\n\
+\t-d : destination ip address\n\
+\t-l : ttl\n\n\
+\t-t : icmp type\n\n\
+\t-o : source port\n\
+\t-p : destination port\n\
+\t-f : tcp flag (syn, ack, psh, fin, rst, urg)\n\n\
+\t-h : this help message\n\n\
+examples :\n\
+\t sending echo request :\n\
+\t./inject icmp -s 192.168.1.50 -d 192.168.1.1 -t 8\n\n\
+\t sending syn packet :\n\
+\t./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 -p 80 -f syn\n\
+\t sending syn ack packet :\n\
+\t./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 -p 80 -f syn -f ack\n\n\
+\t sending udp packet :\n\
+\t./inject udp -s 192.168.1.50 -d 192.168.1.1 -o 5000 -p 4000\n\n");
+}
 
 void parser(int argc, char *argv[])
 {
 	int opt;
-	char *usage="\n usage : ./inject [protocol] [options]\n\n\
- protocol :\n\
- \tip : ip packets\n\
- \ticmp : icmp packets\n\
- \ttcp : tcp packets\n\
- \tudp : udp packets\n\n\
- options :\n\
- \t-s : source ip address\n\
- \t-d : destination ip address\n\
- \t-l : ttl\n\n\
- \t-t : icmp type\n\n\
- \t-o : source port\n\
- \t-p : destination port\n\
- \t-f : tcp flag\n\n\
- \t-h : this help message\n\n\
- examples :\n\
- \t sending echo request :\n\
- \t./inject icmp -s 192.168.1.50 -d 192.168.1.1 -t 8\n\n\
- \t sending syn packet :\n\
- \t./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 -p 80 -f 2\n\n\
- \t sending udp packet :\n\
- \t./inject udp -s 192.168.1.50 -d 192.168.1.1 -o 5000 -p 4000\n\n";
 
 	if (argc < 2) {
-		printf("%s", usage);
+		print_usage();
 		exit(EXIT_FAILURE);
 	}
 
@@ -118,10 +123,21 @@ void parser(int argc, char *argv[])
 			port_dst = atoi(optarg);
 			break;
 		case 'f':
-			tcp_flag = atoi(optarg);
+			if (!strcmp(optarg, "fin"))
+				tcp_flag |= 1;
+			if (!strcmp(optarg, "syn"))
+				tcp_flag |= 2;
+			if (!strcmp(optarg, "rst"))
+				tcp_flag |= 4;
+			if (!strcmp(optarg, "psh"))
+				tcp_flag |= 8;
+			if (!strcmp(optarg, "ack"))
+				tcp_flag |= 16;
+			if (!strcmp(optarg, "urg"))
+				tcp_flag |= 32;
 			break;
 		case 'h':
-			printf("%s", usage);
+			print_usage();
 			exit(EXIT_SUCCESS);
 		case '?':
 			break;
