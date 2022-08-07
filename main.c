@@ -72,16 +72,7 @@ options :\n\
 \t-o : source port\n\
 \t-p : destination port\n\
 \t-f : tcp flag (syn, ack, psh, fin, rst, urg)\n\n\
-\t-h : this help message\n\n\
-examples :\n\
-\t sending echo request :\n\
-\t./inject icmp -s 192.168.1.50 -d 192.168.1.1 -t 8\n\n\
-\t sending syn packet :\n\
-\t./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 -p 80 -f syn\n\
-\t sending syn ack packet :\n\
-\t./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 -p 80 -f syn -f ack\n\n\
-\t sending udp packet :\n\
-\t./inject udp -s 192.168.1.50 -d 192.168.1.1 -o 5000 -p 4000\n\n");
+\t-h : this help message\n\n");
 }
 
 void parser(int argc, char *argv[])
