@@ -11,9 +11,9 @@ Inject is a Raw Socket packet crafter.
 > Currently working on data support.
 
 ### Installation
-* For installation, go to the project directory and compile with
+* For installation, go to the project directory and compile with : 
     `make`
-* For uninstallation
+* For uninstallation : 
     `make clean`
 
 ### Example Usages
