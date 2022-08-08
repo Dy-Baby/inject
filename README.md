@@ -28,5 +28,5 @@ Inject is a Raw Socket packet crafter.
      `./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 - p 80 -f syn -f ack`
 
 * UDP packet
-     `./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 - p 4000`
+     `./inject udp -s 192.168.1.50 -d 192.168.1.1 -o 5000 - p 4000`
 
