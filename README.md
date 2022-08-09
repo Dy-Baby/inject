@@ -8,7 +8,6 @@ Inject is a Raw Socket packet crafter.
 - ICMP (ICMP Type)
 - TCP (Source port, Destination port, TCP Flag)
 - UDP (Source port, Destination port)
-> Currently working on data support.
 
 ### Installation
 * For installation, go to the project directory and compile with : 
