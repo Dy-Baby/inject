@@ -1,7 +1,8 @@
 CC = gcc
 CFLAGS = -Wall
 
-SOURCES = main.c sockf.c send.c checksum.c error_func.c ip.c icmp.c tcp.c udp.c
+SOURCES = src/main.c src/sockf.c src/send.c src/error_func.c\
+	 src/checksum.c src/ip.c src/icmp.c src/tcp.c src/udp.c
 OBJECTS = $(SOURCES:.c=.o)
 TARGET = inject
 
