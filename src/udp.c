@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include "type.h"
 #include "udp.h"
 #include "random.h"
@@ -35,10 +36,10 @@ void set_udp(struct udp_hdr *udph, struct ip_hdr *iph, unsigned short src,
 {
 	if (!src)
 		src = rand_port();
-	udph->src = src;
+	udph->src = htons(src);
 	if (!dst)
 		dst = rand_port();
-	udph->dst = dst;
+	udph->dst = htons(dst);
 	udph->length = htons(sizeof(struct udp_hdr));
 	udph->check = 0;
 	udph->check = udp_check(udph, iph);

@@ -31,30 +31,31 @@ void inject()
 	struct sockaddr_in sock_dst;
 	memset(&sock_dst, 0, sizeof(struct sockaddr_in));
 
-	sockfd = init_socket();
-	sock_dst.sin_family = AF_INET;
-	sock_dst.sin_addr.s_addr = dst_addr;
-	if (protocol == IPPROTO_TCP || protocol == IPPROTO_UDP)
-		sock_dst.sin_port = dst_port;
-
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;
+	struct icmp_hdr *icmph;
+	struct tcp_hdr *tcph;
+	struct udp_hdr *udph;
+
 	set_ip(iph, src_addr, dst_addr, ttl, protocol);
 
 	if (protocol == IPPROTO_ICMP) {
-		struct icmp_hdr *icmph = (struct icmp_hdr *)
-			(buffer + sizeof(struct ip_hdr));
+		icmph = (struct icmp_hdr *)(buffer + sizeof(struct ip_hdr));
 		set_icmp(icmph, type, 0, 1);
 	}
 	if (protocol ==  IPPROTO_TCP) {
-		struct tcp_hdr *tcph = (struct tcp_hdr *)
-			(buffer + sizeof(struct ip_hdr));
+		tcph = (struct tcp_hdr *)(buffer + sizeof(struct ip_hdr));
 		set_tcp(tcph, iph, src_port, dst_port, tcp_flag, 1, 1);
 	}
 	if (protocol == IPPROTO_UDP) {
-               struct udp_hdr *udph = (struct udp_hdr *)
-                       (buffer + sizeof(struct ip_hdr));
+               udph = (struct udp_hdr *)(buffer + sizeof(struct ip_hdr));
                set_udp(udph, iph, src_port, dst_port);
 	}
+
+        sockfd = init_socket();
+        sock_dst.sin_family = AF_INET;
+        sock_dst.sin_addr.s_addr = dst_addr;
+        if (protocol == IPPROTO_TCP || protocol == IPPROTO_UDP)
+                sock_dst.sin_port = (protocol == IPPROTO_TCP) ? tcph->dst : udph->dst;
 
 	send_data(sockfd, buffer, iph->length, &sock_dst);
 }
@@ -111,10 +112,10 @@ void parser(int argc, char *argv[])
 			type = atoi(optarg);
 			break;
 		case 'o':
-			src_port = atoi(optarg);
+			src_port = (unsigned short)atoi(optarg);
 			break;
 		case 'p':
-			dst_port = atoi(optarg);
+			dst_port = (unsigned short)atoi(optarg);
 			break;
 		case 'f':
 			if (!strcmp(optarg, "fin"))

@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include "type.h"
 #include "tcp.h"
 #include "random.h"
@@ -37,10 +38,10 @@ void set_tcp(struct tcp_hdr *tcph, struct ip_hdr *iph,
 {
 	if (!src)
 		src = rand_port();
-	tcph->src = src;
+	tcph->src = htons(src);
 	if (!dst)
 		dst = rand_port();
-	tcph->dst = dst;
+	tcph->dst = htons(dst);
 	tcph->seq = seq;
 	tcph->ack = ack;
 	tcph->len_res = 0x50;
