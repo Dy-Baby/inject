@@ -38,17 +38,19 @@ void inject()
 
 	set_ip(iph, src_addr, dst_addr, ttl, protocol);
 
-	if (protocol == IPPROTO_ICMP) {
+	switch (protocol){
+	case IPPROTO_ICMP:
 		icmph = (struct icmp_hdr *)(buffer + sizeof(struct ip_hdr));
 		set_icmp(icmph, type, 0, 1);
-	}
-	if (protocol ==  IPPROTO_TCP) {
+		break;
+	case IPPROTO_TCP:
 		tcph = (struct tcp_hdr *)(buffer + sizeof(struct ip_hdr));
 		set_tcp(tcph, iph, src_port, dst_port, tcp_flag, 1, 1);
-	}
-	if (protocol == IPPROTO_UDP) {
+		break;
+	case IPPROTO_UDP:
                udph = (struct udp_hdr *)(buffer + sizeof(struct ip_hdr));
                set_udp(udph, iph, src_port, dst_port);
+	       break;
 	}
 
         sockfd = init_socket();
