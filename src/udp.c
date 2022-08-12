@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include "type.h"
 #include "udp.h"
+#include "random.h"
 #include "checksum.h"
 
 unsigned short udp_check(struct udp_hdr *udph, struct ip_hdr *iph)
@@ -32,7 +33,11 @@ unsigned short udp_check(struct udp_hdr *udph, struct ip_hdr *iph)
 void set_udp(struct udp_hdr *udph, struct ip_hdr *iph, unsigned short src,
 	     unsigned short dst)
 {
+	if (!src)
+		src = rand_port();
 	udph->src = src;
+	if (!dst)
+		dst = rand_port();
 	udph->dst = dst;
 	udph->length = htons(sizeof(struct udp_hdr));
 	udph->check = 0;

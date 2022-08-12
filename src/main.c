@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -17,12 +18,14 @@
 
 #define BUFF_SIZE 4096
 
-unsigned int ip_src, ip_dst;
+unsigned int src_addr, dst_addr;
 unsigned char ttl,  protocol, type, tcp_flag;
-unsigned short port_src, port_dst;
+unsigned short src_port = 0, dst_port = 0;
 
 void inject()
 {
+	srand(time(NULL));
+
 	int sockfd;
 	char buffer[BUFF_SIZE];
 	struct sockaddr_in sock_dst;
@@ -30,12 +33,12 @@ void inject()
 
 	sockfd = init_socket();
 	sock_dst.sin_family = AF_INET;
-	sock_dst.sin_addr.s_addr = ip_dst;
+	sock_dst.sin_addr.s_addr = dst_addr;
 	if (protocol == IPPROTO_TCP || protocol == IPPROTO_UDP)
-		sock_dst.sin_port = port_dst;
+		sock_dst.sin_port = dst_port;
 
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;
-	set_ip(iph, ip_src, ip_dst, ttl, protocol);
+	set_ip(iph, src_addr, dst_addr, ttl, protocol);
 
 	if (protocol == IPPROTO_ICMP) {
 		struct icmp_hdr *icmph = (struct icmp_hdr *)
@@ -45,12 +48,12 @@ void inject()
 	if (protocol ==  IPPROTO_TCP) {
 		struct tcp_hdr *tcph = (struct tcp_hdr *)
 			(buffer + sizeof(struct ip_hdr));
-		set_tcp(tcph, iph, port_src, port_dst, tcp_flag, 1, 1);
+		set_tcp(tcph, iph, src_port, dst_port, tcp_flag, 1, 1);
 	}
 	if (protocol == IPPROTO_UDP) {
                struct udp_hdr *udph = (struct udp_hdr *)
                        (buffer + sizeof(struct ip_hdr));
-               set_udp(udph, iph, port_src, port_dst);
+               set_udp(udph, iph, src_port, dst_port);
 	}
 
 	send_data(sockfd, buffer, iph->length, &sock_dst);
@@ -96,10 +99,10 @@ void parser(int argc, char *argv[])
 	while ((opt = getopt(argc, argv, "s:d:l:t:o:p:f:h")) != -1) {
 		switch (opt) {
 		case 's':
-			ip_src = inet_addr(optarg);
+			src_addr = inet_addr(optarg);
 			break;
 		case 'd':
-			ip_dst = inet_addr(optarg);
+			dst_addr = inet_addr(optarg);
 			break;
 		case 'l':
 			ttl = atoi(optarg);
@@ -108,10 +111,10 @@ void parser(int argc, char *argv[])
 			type = atoi(optarg);
 			break;
 		case 'o':
-			port_src = atoi(optarg);
+			src_port = atoi(optarg);
 			break;
 		case 'p':
-			port_dst = atoi(optarg);
+			dst_port = atoi(optarg);
 			break;
 		case 'f':
 			if (!strcmp(optarg, "fin"))

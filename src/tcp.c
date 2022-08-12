@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include "type.h"
 #include "tcp.h"
+#include "random.h"
 #include "checksum.h"
 
 unsigned short tcp_check(struct tcp_hdr *tcph, struct ip_hdr *iph)
@@ -34,7 +35,11 @@ void set_tcp(struct tcp_hdr *tcph, struct ip_hdr *iph,
 		unsigned char flag, unsigned int seq,
 		unsigned int ack)
 {
+	if (!src)
+		src = rand_port();
 	tcph->src = src;
+	if (!dst)
+		dst = rand_port();
 	tcph->dst = dst;
 	tcph->seq = seq;
 	tcph->ack = ack;
