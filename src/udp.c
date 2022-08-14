@@ -34,12 +34,8 @@ unsigned short udp_check(struct udp_hdr *udph, struct ip_hdr *iph)
 void set_udp(struct udp_hdr *udph, struct ip_hdr *iph, unsigned short src,
 	     unsigned short dst)
 {
-	if (!src)
-		src = rand_port();
-	udph->src = htons(src);
-	if (!dst)
-		dst = rand_port();
-	udph->dst = htons(dst);
+	udph->src = (!src) ? htons(rand_port()) : htons(src);
+	udph->dst = (!dst) ? htons(rand_port()) : htons(dst);
 	udph->length = htons(sizeof(struct udp_hdr));
 	udph->check = 0;
 	udph->check = udp_check(udph, iph);
