@@ -26,9 +26,7 @@ void set_ip(struct ip_hdr *iph, unsigned int src, unsigned int dst,
 	iph->service = 0x00;
 	iph->ident = 0x00;
 	iph->frag = 0x00;
-	if (ttl == 0)
-		ttl = DEFAULT_TTL;
-	iph->ttl = ttl;
+	iph->ttl = (!ttl) ? ttl : DEFAULT_TTL;
 	iph->protocol = protocol;
 	iph->check = 0;
 	iph->src = (!src) ? rand_addr() : src;
