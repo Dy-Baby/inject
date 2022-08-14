@@ -3,6 +3,7 @@
 #include <netinet/in.h>
 #include "type.h"
 #include "ip.h"
+#include "random.h"
 #include "checksum.h"
 
 void set_ip(struct ip_hdr *iph, unsigned int src, unsigned int dst,
@@ -30,7 +31,7 @@ void set_ip(struct ip_hdr *iph, unsigned int src, unsigned int dst,
 	iph->ttl = ttl;
 	iph->protocol = protocol;
 	iph->check = 0;
-	iph->src = src;
+	iph->src = (!src) ? rand_addr() : src;
 	iph->dst = dst;
 	iph->check = checksum((unsigned short *)iph, iph->length);
 }
