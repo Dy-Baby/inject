@@ -4,6 +4,7 @@
 #include "type.h"
 #include "ip.h"
 #include "random.h"
+#include "get_addr.h"
 #include "checksum.h"
 
 void set_ip(struct ip_hdr *iph, unsigned int src, unsigned int dst,
@@ -29,7 +30,7 @@ void set_ip(struct ip_hdr *iph, unsigned int src, unsigned int dst,
 	iph->ttl = (!ttl) ? ttl : DEFAULT_TTL;
 	iph->protocol = protocol;
 	iph->check = 0;
-	iph->src = (!src) ? rand_addr() : src;
+	iph->src = (!src) ? get_address() : src;
 	iph->dst = dst;
 	iph->check = checksum((unsigned short *)iph, iph->length);
 }
