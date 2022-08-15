@@ -36,6 +36,12 @@ void inject()
 	struct tcp_hdr *tcph;
 	struct udp_hdr *udph;
 
+	if (!dst_addr) {
+		printf("[ERROR] [main.c/inject]\
+ destination address not specified.\n");
+		exit(EXIT_FAILURE);
+	}
+
 	set_ip(iph, src_addr, dst_addr, ttl, protocol);
 
 	switch (protocol){
@@ -145,6 +151,11 @@ void parser(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
 	parser(argc, argv);
+	
+	if (getuid() != 0) {
+		printf("permission denied\n");
+		exit(EXIT_FAILURE);
+	}
 	inject();
 
 	return 0;
