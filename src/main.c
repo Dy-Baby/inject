@@ -21,11 +21,10 @@
 unsigned int src_addr, dst_addr;
 unsigned char ttl,  protocol, type, tcp_flag;
 unsigned short src_port = 0, dst_port = 0;
+int counter = 1;
 
 void inject()
 {
-	srand(time(NULL));
-
 	int sockfd;
 	char buffer[BUFF_SIZE];
 	struct sockaddr_in sock_dst;
@@ -84,6 +83,7 @@ options :\n\
 \t-o : source port\n\
 \t-p : destination port\n\
 \t-f : tcp flag (syn, ack, psh, fin, rst, urg)\n\n\
+\t-c : number of packets to send\n\n\
 \t-h : this help message\n\n");
 }
 
@@ -105,7 +105,7 @@ void parser(int argc, char *argv[])
 	if (!strcmp(argv[1], "udp"))
 		protocol = IPPROTO_UDP;
 
-	while ((opt = getopt(argc, argv, "s:d:l:t:o:p:f:h")) != -1) {
+	while ((opt = getopt(argc, argv, "s:d:l:t:o:p:f:c:h")) != -1) {
 		switch (opt) {
 		case 's':
 			src_addr = inet_addr(optarg);
@@ -139,6 +139,9 @@ void parser(int argc, char *argv[])
 			if (!strcmp(optarg, "urg"))
 				tcp_flag |= 32;
 			break;
+		case 'c':
+			counter = atoi(optarg);
+			break;
 		case 'h':
 			print_usage();
 			exit(EXIT_SUCCESS);
@@ -150,13 +153,19 @@ void parser(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
+	int ind;
+
 	parser(argc, argv);
 	
 	if (getuid() != 0) {
 		printf("permission denied\n");
 		exit(EXIT_FAILURE);
 	}
-	inject();
+
+	srand(time(NULL));
+
+	for (ind = 0; ind < counter; ind += 1)
+		inject();
 
 	return 0;
 }
