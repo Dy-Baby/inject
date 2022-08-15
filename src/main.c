@@ -18,6 +18,7 @@
 
 #define BUFF_SIZE 4096
 
+int sockfd;
 unsigned int src_addr, dst_addr;
 unsigned char ttl,  protocol, type, tcp_flag;
 unsigned short src_port = 0, dst_port = 0;
@@ -25,7 +26,6 @@ int counter = 1;
 
 void inject()
 {
-	int sockfd;
 	char buffer[BUFF_SIZE];
 	struct sockaddr_in sock_dst;
 	memset(&sock_dst, 0, sizeof(struct sockaddr_in));
@@ -52,7 +52,6 @@ void inject()
 	       break;
 	}
 
-        sockfd = init_socket();
         sock_dst.sin_family = AF_INET;
         sock_dst.sin_addr.s_addr = dst_addr;
         if (protocol == IPPROTO_TCP || protocol == IPPROTO_UDP)
@@ -161,6 +160,7 @@ int main(int argc, char *argv[])
                 exit(EXIT_FAILURE);
         }
 
+	sockfd = init_socket();
 	srand(time(NULL));
 	for (ind = 0; ind < counter; ind += 1)
 		inject();
