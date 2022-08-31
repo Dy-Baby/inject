@@ -16,7 +16,7 @@ unsigned int get_address()
 	unsigned int ip;
 
 	if (getifaddrs(&addr) == -1) {
-		err_msg("get_addr.c/get_address", errno);
+		err_msg("get_addr.c", "get_address", __LINE__, errno);
 		return -1;
 	}
 

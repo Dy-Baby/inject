@@ -155,8 +155,8 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
         if (!dst_addr) {
-                printf("[ERROR] [main.c/inject]\
- destination address not specified.\n");
+                printf("[ERROR] [main.c/main/%d] :\
+ destination address not specified.\n", __LINE__);
                 exit(EXIT_FAILURE);
         }
 
