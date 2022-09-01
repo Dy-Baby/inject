@@ -63,12 +63,12 @@ void inject()
 void print_usage()
 {
        printf("\n usage : ./inject [protocol] [options]\n\n\
-protocol :\n\
+ protocol :\n\
 \tip : ip packets\n\
 \ticmp : icmp packets\n\
 \ttcp : tcp packets\n\
 \tudp : udp packets\n\n\
-options :\n\
+ options :\n\
 \t-s : source ip address\n\
 \t-d : destination ip address\n\
 \t-l : ttl\n\n\
@@ -78,16 +78,15 @@ options :\n\
 \t-f : tcp flag (syn, ack, psh, fin, rst, urg)\n\n\
 \t-c : number of packets to send\n\n\
 \t-h : this help message\n\n");
+	exit(EXIT_SUCCESS);
 }
 
 void parser(int argc, char *argv[])
 {
 	int opt;
 
-	if (argc < 2) {
+	if (argc < 2)
 		print_usage();
-		exit(EXIT_FAILURE);
-	}
 
 	if (!strcmp(argv[1], "ip"))
 		protocol = IPPROTO_RAW;
@@ -137,7 +136,6 @@ void parser(int argc, char *argv[])
 			break;
 		case 'h':
 			print_usage();
-			exit(EXIT_SUCCESS);
 		case '?':
 			break;
 		}
