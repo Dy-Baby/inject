@@ -8,7 +8,7 @@
 #include "checksum.h"
 
 void set_ip(struct ip_hdr *iph, unsigned int src, unsigned int dst,
-		unsigned char ttl, unsigned char protocol)
+	    unsigned char ttl, unsigned char protocol)
 {
 	iph->length = sizeof(struct ip_hdr);
 	switch (protocol) {

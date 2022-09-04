@@ -4,8 +4,8 @@
 #include "icmp.h"
 #include "checksum.h"
 
-void set_icmp(struct icmp_hdr *icmph, unsigned char type,
-		unsigned char code, unsigned short seq)
+void set_icmp(struct icmp_hdr *icmph, unsigned char type, unsigned char code,
+	      unsigned short seq)
 {
 	icmph->type = type;
 	icmph->code = code;

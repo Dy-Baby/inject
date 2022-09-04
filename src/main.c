@@ -20,7 +20,7 @@
 
 int sockfd;
 unsigned int src_addr, dst_addr;
-unsigned char ttl,  protocol, type, tcp_flag;
+unsigned char ttl, protocol, type, tcp_flag;
 unsigned short src_port = 0, dst_port = 0;
 int counter = 1;
 
@@ -37,7 +37,7 @@ void inject()
 
 	set_ip(iph, src_addr, dst_addr, ttl, protocol);
 
-	switch (protocol){
+	switch (protocol) {
 	case IPPROTO_ICMP:
 		icmph = (struct icmp_hdr *)(buffer + sizeof(struct ip_hdr));
 		set_icmp(icmph, type, 0, 1);
@@ -47,22 +47,23 @@ void inject()
 		set_tcp(tcph, iph, src_port, dst_port, tcp_flag, 1, 1);
 		break;
 	case IPPROTO_UDP:
-               udph = (struct udp_hdr *)(buffer + sizeof(struct ip_hdr));
-               set_udp(udph, iph, src_port, dst_port);
-	       break;
+		udph = (struct udp_hdr *)(buffer + sizeof(struct ip_hdr));
+		set_udp(udph, iph, src_port, dst_port);
+		break;
 	}
 
-        sock_dst.sin_family = AF_INET;
-        sock_dst.sin_addr.s_addr = dst_addr;
-        if (protocol == IPPROTO_TCP || protocol == IPPROTO_UDP)
-                sock_dst.sin_port = (protocol == IPPROTO_TCP) ? tcph->dst : udph->dst;
+	sock_dst.sin_family = AF_INET;
+	sock_dst.sin_addr.s_addr = dst_addr;
+	if (protocol == IPPROTO_TCP || protocol == IPPROTO_UDP)
+		sock_dst.sin_port = (protocol == IPPROTO_TCP) ? tcph->dst :
+								      udph->dst;
 
 	send_data(sockfd, buffer, iph->length, &sock_dst);
 }
 
 void print_usage()
 {
-       printf("\n usage : ./inject [protocol] [options]\n\n\
+	printf("\n usage : ./inject [protocol] [options]\n\n\
  protocol :\n\
 \tip : ip packets\n\
 \ticmp : icmp packets\n\
@@ -147,16 +148,17 @@ int main(int argc, char *argv[])
 	int ind;
 
 	parser(argc, argv);
-	
+
 	if (getuid() != 0) {
 		printf("permission denied\n");
 		exit(EXIT_FAILURE);
 	}
-        if (!dst_addr) {
-                printf("[ERROR] [main.c/main/%d] :\
- destination address not specified.\n", __LINE__);
-                exit(EXIT_FAILURE);
-        }
+	if (!dst_addr) {
+		printf("[ERROR] [main.c/main/%d] :\
+ destination address not specified.\n",
+		       __LINE__);
+		exit(EXIT_FAILURE);
+	}
 
 	sockfd = init_socket();
 	srand(time(NULL));

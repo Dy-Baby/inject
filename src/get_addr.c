@@ -24,8 +24,8 @@ unsigned int get_address()
 		if (temp->ifa_addr == NULL)
 			continue;
 
-		if (temp->ifa_addr->sa_family == AF_INET
-			&& strcmp(temp->ifa_name, "lo")) {
+		if (temp->ifa_addr->sa_family == AF_INET &&
+		    strcmp(temp->ifa_name, "lo")) {
 			ip_addr = (struct sockaddr_in *)temp->ifa_addr;
 			ip = ip_addr->sin_addr.s_addr;
 
