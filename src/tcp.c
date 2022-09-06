@@ -35,8 +35,8 @@ void set_tcp(struct tcp_hdr *tcph, struct ip_hdr *iph, unsigned short src,
 	     unsigned short dst, unsigned char flag, unsigned int seq,
 	     unsigned int ack)
 {
-	tcph->src = (!src) ? htons(rand_port()) : htons(src);
-	tcph->dst = (!dst) ? htons(rand_port()) : htons(dst);
+	tcph->src = (src) ? htons(src) : htons(rand_port());
+	tcph->dst = (dst) ? htons(dst) : htons(rand_port());
 	tcph->seq = seq;
 	tcph->ack = ack;
 	tcph->len_res = 0x50;
