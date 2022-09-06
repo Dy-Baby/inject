@@ -55,8 +55,7 @@ void inject()
 	sock_dst.sin_family = AF_INET;
 	sock_dst.sin_addr.s_addr = dst_addr;
 	if (protocol == IPPROTO_TCP || protocol == IPPROTO_UDP)
-		sock_dst.sin_port = (protocol == IPPROTO_TCP) ? tcph->dst :
-								      udph->dst;
+		sock_dst.sin_port = (protocol == IPPROTO_TCP) ? tcph->dst : udph->dst;
 
 	send_data(sockfd, buffer, iph->length, &sock_dst);
 }
@@ -79,7 +78,7 @@ void print_usage()
 \t-f : tcp flag (syn, ack, psh, fin, rst, urg)\n\n\
 \t-c : number of packets to send\n\n\
 \t-h : this help message\n\n");
-	exit(EXIT_SUCCESS);
+	exit(EXIT_FAILURE);
 }
 
 void parser(int argc, char *argv[])
@@ -89,14 +88,10 @@ void parser(int argc, char *argv[])
 	if (argc < 2)
 		print_usage();
 
-	if (!strcmp(argv[1], "ip"))
-		protocol = IPPROTO_RAW;
-	if (!strcmp(argv[1], "icmp"))
-		protocol = IPPROTO_ICMP;
-	if (!strcmp(argv[1], "tcp"))
-		protocol = IPPROTO_TCP;
-	if (!strcmp(argv[1], "udp"))
-		protocol = IPPROTO_UDP;
+	if (!strcmp(argv[1], "ip")) protocol = IPPROTO_RAW;
+	if (!strcmp(argv[1], "icmp")) protocol = IPPROTO_ICMP;
+	if (!strcmp(argv[1], "tcp")) protocol = IPPROTO_TCP;
+	if (!strcmp(argv[1], "udp")) protocol = IPPROTO_UDP;
 
 	while ((opt = getopt(argc, argv, "s:d:l:t:o:p:f:c:h")) != -1) {
 		switch (opt) {
@@ -119,18 +114,12 @@ void parser(int argc, char *argv[])
 			dst_port = (unsigned short)atoi(optarg);
 			break;
 		case 'f':
-			if (!strcmp(optarg, "fin"))
-				tcp_flag |= 1;
-			if (!strcmp(optarg, "syn"))
-				tcp_flag |= 2;
-			if (!strcmp(optarg, "rst"))
-				tcp_flag |= 4;
-			if (!strcmp(optarg, "psh"))
-				tcp_flag |= 8;
-			if (!strcmp(optarg, "ack"))
-				tcp_flag |= 16;
-			if (!strcmp(optarg, "urg"))
-				tcp_flag |= 32;
+			if (!strcmp(optarg, "fin")) tcp_flag |= 1;
+			if (!strcmp(optarg, "syn")) tcp_flag |= 2;
+			if (!strcmp(optarg, "rst")) tcp_flag |= 4;
+			if (!strcmp(optarg, "psh")) tcp_flag |= 8;
+			if (!strcmp(optarg, "ack")) tcp_flag |= 16;
+			if (!strcmp(optarg, "urg")) tcp_flag |= 32;
 			break;
 		case 'c':
 			counter = atoi(optarg);
@@ -149,7 +138,7 @@ int main(int argc, char *argv[])
 
 	parser(argc, argv);
 
-	if (getuid() != 0) {
+	if (getuid()) {
 		printf("permission denied\n");
 		exit(EXIT_FAILURE);
 	}
