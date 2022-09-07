@@ -140,7 +140,6 @@ int main(int argc, char *argv[])
 	parser(argc, argv);
 
 	if (getuid()) err_exit("permission denied.");
-
 	if (!dst_addr) err_exit("destination address not specified.");
 
 	sockfd = init_socket();
@@ -148,6 +147,8 @@ int main(int argc, char *argv[])
 	srand(time(NULL));
 	for (ind = 0; ind < counter; ind += 1)
 		inject();
+
+	close_sock(sockfd);
 
 	return 0;
 }
