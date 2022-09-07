@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -23,6 +24,12 @@ unsigned int src_addr = 0, dst_addr = 0;
 unsigned char ttl, protocol = 0, type = 0, tcp_flag = 0;
 unsigned short src_port = 0, dst_port = 0;
 int counter = 1;
+
+void sig_close()
+{
+	close_sock(sockfd);
+	exit(EXIT_FAILURE);
+}
 
 void inject()
 {
@@ -135,6 +142,7 @@ void parser(int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
+	signal(SIGINT, sig_close);
 	int ind;
 
 	parser(argc, argv);
