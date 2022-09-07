@@ -138,16 +138,11 @@ int main(int argc, char *argv[])
 
 	parser(argc, argv);
 
-	if (getuid()) {
-		printf("permission denied\n");
-		exit(EXIT_FAILURE);
-	}
-	if (!dst_addr) {
-		printf("[ERROR] [main.c/main/%d] :\
- destination address not specified.\n",
-		       __LINE__);
-		exit(EXIT_FAILURE);
-	}
+	if (getuid())
+		err_exit("permission denied.");
+
+	if (!dst_addr)
+		err_exit("destination address not specified.");
 
 	sockfd = init_socket();
 	srand(time(NULL));
