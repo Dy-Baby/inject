@@ -81,6 +81,30 @@ void print_usage()
 	exit(EXIT_FAILURE);
 }
 
+void get_protocol(char *proto)
+{
+	int control = 0;
+
+	if (!strcmp(proto, "ip")) {
+		protocol = IPPROTO_RAW;
+		control = 1;
+	}
+	if (!strcmp(proto, "icmp")) {
+		protocol = IPPROTO_ICMP;
+		control = 1;
+	}
+	if (!strcmp(proto, "tcp")) {
+		protocol = IPPROTO_TCP;
+		control = 1;
+	}
+	if (!strcmp(proto, "udp")) {
+		protocol = IPPROTO_UDP;
+		control = 1;
+	}
+
+	if (!control) err_exit("protocol is not valid.");
+}
+
 void parser(int argc, char *argv[])
 {
 	int opt;
@@ -88,10 +112,7 @@ void parser(int argc, char *argv[])
 	if (argc < 2)
 		print_usage();
 
-	if (!strcmp(argv[1], "ip")) protocol = IPPROTO_RAW;
-	if (!strcmp(argv[1], "icmp")) protocol = IPPROTO_ICMP;
-	if (!strcmp(argv[1], "tcp")) protocol = IPPROTO_TCP;
-	if (!strcmp(argv[1], "udp")) protocol = IPPROTO_UDP;
+	get_protocol(argv[1]);
 
 	while ((opt = getopt(argc, argv, "s:d:l:t:o:p:f:c:h")) != -1) {
 		switch (opt) {
@@ -138,13 +159,12 @@ int main(int argc, char *argv[])
 
 	parser(argc, argv);
 
-	if (getuid())
-		err_exit("permission denied.");
+	if (getuid()) err_exit("permission denied.");
 
-	if (!dst_addr)
-		err_exit("destination address not specified.");
+	if (!dst_addr) err_exit("destination address not specified.");
 
 	sockfd = init_socket();
+
 	srand(time(NULL));
 	for (ind = 0; ind < counter; ind += 1)
 		inject();
