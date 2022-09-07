@@ -81,16 +81,6 @@ void print_usage()
 	exit(EXIT_FAILURE);
 }
 
-void get_protocol(char *proto)
-{
-	if (!strcmp(proto, "ip")) protocol = IPPROTO_RAW;
-	if (!strcmp(proto, "icmp")) protocol = IPPROTO_ICMP;
-	if (!strcmp(proto, "tcp")) protocol = IPPROTO_TCP;
-	if (!strcmp(proto, "udp")) protocol = IPPROTO_UDP;
-
-	if (!protocol) err_exit("protocol is not valid.");
-}
-
 void parser(int argc, char *argv[])
 {
 	int opt;
@@ -98,7 +88,11 @@ void parser(int argc, char *argv[])
 	if (argc < 2)
 		print_usage();
 
-	get_protocol(argv[1]);
+	if (!strcmp(proto, "ip")) protocol = IPPROTO_RAW;
+	if (!strcmp(proto, "icmp")) protocol = IPPROTO_ICMP;
+	if (!strcmp(proto, "tcp")) protocol = IPPROTO_TCP;
+	if (!strcmp(proto, "udp")) protocol = IPPROTO_UDP;
+	if (!protocol) err_exit("protocol is not valid.");
 
 	while ((opt = getopt(argc, argv, "s:d:l:t:o:p:f:c:h")) != -1) {
 		switch (opt) {
@@ -127,6 +121,7 @@ void parser(int argc, char *argv[])
 			if (!strcmp(optarg, "psh")) tcp_flag |= 8;
 			if (!strcmp(optarg, "ack")) tcp_flag |= 16;
 			if (!strcmp(optarg, "urg")) tcp_flag |= 32;
+			if (!tcp_flag) err_exit("tcp flag is not valid.");
 			break;
 		case 'c':
 			counter = atoi(optarg);
