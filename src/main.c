@@ -19,8 +19,8 @@
 #define BUFF_SIZE 4096
 
 int sockfd;
-unsigned int src_addr, dst_addr;
-unsigned char ttl = 0, protocol = 0, type = 0, tcp_flag = 0;
+unsigned int src_addr = 0, dst_addr = 0;
+unsigned char ttl, protocol = 0, type = 0, tcp_flag = 0;
 unsigned short src_port = 0, dst_port = 0;
 int counter = 1;
 
@@ -37,6 +37,7 @@ void inject()
 
 	set_ip(iph, src_addr, dst_addr, ttl, protocol);
 
+	if (!protocol) err_exit("protocol is not valid.");
 	switch (protocol) {
 	case IPPROTO_ICMP:
 		icmph = (struct icmp_hdr *)(buffer + sizeof(struct ip_hdr));
@@ -88,11 +89,10 @@ void parser(int argc, char *argv[])
 	if (argc < 2)
 		print_usage();
 
-	if (!strcmp(proto, "ip")) protocol = IPPROTO_RAW;
-	if (!strcmp(proto, "icmp")) protocol = IPPROTO_ICMP;
-	if (!strcmp(proto, "tcp")) protocol = IPPROTO_TCP;
-	if (!strcmp(proto, "udp")) protocol = IPPROTO_UDP;
-	if (!protocol) err_exit("protocol is not valid.");
+	if (!strcmp(argv[1], "ip")) protocol = IPPROTO_RAW;
+	if (!strcmp(argv[1], "icmp")) protocol = IPPROTO_ICMP;
+	if (!strcmp(argv[1], "tcp")) protocol = IPPROTO_TCP;
+	if (!strcmp(argv[1], "udp")) protocol = IPPROTO_UDP;
 
 	while ((opt = getopt(argc, argv, "s:d:l:t:o:p:f:c:h")) != -1) {
 		switch (opt) {
@@ -121,7 +121,6 @@ void parser(int argc, char *argv[])
 			if (!strcmp(optarg, "psh")) tcp_flag |= 8;
 			if (!strcmp(optarg, "ack")) tcp_flag |= 16;
 			if (!strcmp(optarg, "urg")) tcp_flag |= 32;
-			if (!tcp_flag) err_exit("tcp flag is not valid.");
 			break;
 		case 'c':
 			counter = atoi(optarg);
