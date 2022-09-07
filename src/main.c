@@ -20,7 +20,7 @@
 
 int sockfd;
 unsigned int src_addr, dst_addr;
-unsigned char ttl, protocol, type, tcp_flag;
+unsigned char ttl = 0, protocol = 0, type = 0, tcp_flag = 0;
 unsigned short src_port = 0, dst_port = 0;
 int counter = 1;
 
@@ -83,26 +83,12 @@ void print_usage()
 
 void get_protocol(char *proto)
 {
-	int control = 0;
+	if (!strcmp(proto, "ip")) protocol = IPPROTO_RAW;
+	if (!strcmp(proto, "icmp")) protocol = IPPROTO_ICMP;
+	if (!strcmp(proto, "tcp")) protocol = IPPROTO_TCP;
+	if (!strcmp(proto, "udp")) protocol = IPPROTO_UDP;
 
-	if (!strcmp(proto, "ip")) {
-		protocol = IPPROTO_RAW;
-		control = 1;
-	}
-	if (!strcmp(proto, "icmp")) {
-		protocol = IPPROTO_ICMP;
-		control = 1;
-	}
-	if (!strcmp(proto, "tcp")) {
-		protocol = IPPROTO_TCP;
-		control = 1;
-	}
-	if (!strcmp(proto, "udp")) {
-		protocol = IPPROTO_UDP;
-		control = 1;
-	}
-
-	if (!control) err_exit("protocol is not valid.");
+	if (!protocol) err_exit("protocol is not valid.");
 }
 
 void parser(int argc, char *argv[])
