@@ -27,10 +27,10 @@ void set_ip(struct ip_hdr *iph, unsigned int src, unsigned int dst,
 	iph->service = 0x00;
 	iph->ident = 0x00;
 	iph->frag = 0x00;
-	iph->ttl = (!ttl) ? ttl : DEFAULT_TTL;
+	iph->ttl = (ttl) ? ttl : DEFAULT_TTL;
 	iph->protocol = protocol;
 	iph->check = 0;
-	iph->src = (!src) ? get_address() : src;
+	iph->src = (src) ? src : get_address();
 	iph->dst = dst;
 	iph->check = checksum((unsigned short *)iph, iph->length);
 }

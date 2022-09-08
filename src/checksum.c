@@ -1,16 +1,14 @@
 unsigned short checksum(unsigned short *ptr, int nbytes)
 {
-	unsigned short oddbyte;
-	register long sum;
-	register short answer;
+	unsigned short oddbyte = 0;
+	register long sum = 0;
+	register short answer = 0;
 
-	sum = 0;
 	while (nbytes > 1) {
 		sum += *ptr++;
 		nbytes -= 2;
 	}
 	if (nbytes == 1) {
-		oddbyte = 0;
 		*((unsigned char *)&oddbyte) = *(unsigned char *)ptr;
 		sum += oddbyte;
 	}
