@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include "type.h"
 #include "error_func.h"
+#include "error.h"
 #include "sockf.h"
 #include "send.h"
 #include "ip.h"
@@ -23,7 +24,7 @@ int sockfd;
 unsigned int src_addr = 0, dst_addr = 0;
 unsigned char ttl, protocol = 0, type = 0, tcp_flag = 0;
 unsigned short src_port = 0, dst_port = 0;
-int counter = 1;
+int verbose = 0, counter = 1;
 
 void sig_close()
 {
@@ -66,6 +67,9 @@ void inject()
 		sock_dst.sin_port = (protocol == IPPROTO_TCP) ? tcph->dst : udph->dst;
 
 	send_data(sockfd, buffer, iph->length, &sock_dst);
+
+	if (verbose)
+		output(buffer, protocol);
 }
 
 void print_usage()
@@ -85,6 +89,7 @@ void print_usage()
 \t-p : destination port\n\
 \t-f : tcp flag (syn, ack, psh, fin, rst, urg)\n\n\
 \t-c : number of packets to send\n\n\
+\t-v : verbose\n\n\
 \t-h : this help message\n\n");
 	exit(EXIT_FAILURE);
 }
@@ -101,7 +106,7 @@ void parser(int argc, char *argv[])
 	if (!strcmp(argv[1], "tcp")) protocol = IPPROTO_TCP;
 	if (!strcmp(argv[1], "udp")) protocol = IPPROTO_UDP;
 
-	while ((opt = getopt(argc, argv, "s:d:l:t:o:p:f:c:h")) != -1) {
+	while ((opt = getopt(argc, argv, "s:d:l:t:o:p:f:c:vh")) != -1) {
 		switch (opt) {
 		case 's':
 			src_addr = inet_addr(optarg);
@@ -128,6 +133,9 @@ void parser(int argc, char *argv[])
 			if (!strcmp(optarg, "psh")) tcp_flag |= 8;
 			if (!strcmp(optarg, "ack")) tcp_flag |= 16;
 			if (!strcmp(optarg, "urg")) tcp_flag |= 32;
+			break;
+		case 'v':
+			verbose = 1;
 			break;
 		case 'c':
 			counter = atoi(optarg);
