@@ -10,7 +10,7 @@
 #include <netinet/in.h>
 #include "type.h"
 #include "error_func.h"
-#include "error.h"
+#include "output.h"
 #include "sockf.h"
 #include "send.h"
 #include "ip.h"
