@@ -8,7 +8,7 @@
 #include "random.h"
 #include "checksum.h"
 
-unsigned short tcp_check(struct tcp_hdr *tcph, struct ip_hdr *iph)
+static unsigned short tcp_check(struct tcp_hdr *tcph, struct ip_hdr *iph)
 {
 	struct psd_hdr psh;
 	char *psd;

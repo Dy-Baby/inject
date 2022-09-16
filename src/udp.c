@@ -8,7 +8,7 @@
 #include "random.h"
 #include "checksum.h"
 
-unsigned short udp_check(struct udp_hdr *udph, struct ip_hdr *iph)
+static unsigned short udp_check(struct udp_hdr *udph, struct ip_hdr *iph)
 {
 	struct psd_hdr psh;
 	char *psd;
