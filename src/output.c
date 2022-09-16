@@ -6,6 +6,23 @@
 #include "output.h"
 #include "type.h"
 
+static void get_icmp_type(unsigned char type, char *type_str)
+{
+	if (type == 0) strcpy(type_str, "echo reply");
+	if (type == 3) strcpy(type_str, "destination unreachable");
+	if (type == 4) strcpy(type_str, "source quench");
+	if (type == 5) strcpy(type_str, "redirect");
+	if (type == 8) strcpy(type_str, "echo request");
+	if (type == 11) strcpy(type_str, "time exceeded");
+	if (type == 12) strcpy(type_str, "parameter unintelligible");
+	if (type == 13) strcpy(type_str, "time-stamp request");
+	if (type == 14) strcpy(type_str, "time-stamp reply");
+	if (type == 15) strcpy(type_str, "information request");
+	if (type == 16) strcpy(type_str, "information reply");
+	if (type == 17) strcpy(type_str, "address mask request");
+	if (type == 18) strcpy(type_str, "address mask reply");
+}
+
 static void get_tcp_flag(unsigned char flag, char *flag_str)
 {
 	if ((flag | 1) == flag) strcat(flag_str, "fin,");
@@ -24,7 +41,7 @@ void output(char *buffer, int protocol)
 	struct tcp_hdr *tcph;
 	struct udp_hdr *udph;
 
-	char flag_str[24];
+	char flag_str[24], type_str[50];
 
 	memset(flag_str, 0, 24);
 	src.sin_addr.s_addr = iph->src;
@@ -38,7 +55,8 @@ void output(char *buffer, int protocol)
 	switch (protocol) {
 	case IPPROTO_ICMP:
                 icmph = (struct icmp_hdr *)(buffer + sizeof(struct ip_hdr));
-                printf("type:%d code:%d / ", icmph->type, icmph->code);
+		get_icmp_type(icmph->type, type_str);
+                printf("type : %d %s / ", icmph->type, type_str);
 		break;
         case IPPROTO_TCP:
                 tcph = (struct tcp_hdr *)(buffer + sizeof(struct ip_hdr));
