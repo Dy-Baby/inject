@@ -24,7 +24,7 @@ int sockfd;
 unsigned int src_addr = 0, dst_addr = 0;
 unsigned char ttl, protocol = 0, type = 0, tcp_flag = 0;
 unsigned short src_port = 0, dst_port = 0;
-int verbose = 0, counter = 1;
+int verbose = 0, count = 1, ind = 0;
 
 void sig_close()
 {
@@ -35,6 +35,7 @@ void sig_close()
 void inject()
 {
 	char buffer[BUFF_SIZE];
+	int status;
 	struct sockaddr_in sock_dst;
 	memset(&sock_dst, 0, sizeof(struct sockaddr_in));
 
@@ -66,10 +67,10 @@ void inject()
 	if (protocol == IPPROTO_TCP || protocol == IPPROTO_UDP)
 		sock_dst.sin_port = (protocol == IPPROTO_TCP) ? tcph->dst : udph->dst;
 
-	send_data(sockfd, buffer, iph->length, &sock_dst);
+	status = send_data(sockfd, buffer, iph->length, &sock_dst);
 
 	if (verbose)
-		output(buffer, protocol);
+		output(buffer, protocol, status, ind, count);
 }
 
 void print_usage()
@@ -81,14 +82,14 @@ void print_usage()
 \ttcp : tcp packets\n\
 \tudp : udp packets\n\n\
  options :\n\
-\t-s : source ip address\n\
-\t-d : destination ip address\n\
-\t-l : ttl\n\n\
-\t-t : icmp type\n\n\
-\t-o : source port\n\
-\t-p : destination port\n\
-\t-f : tcp flag (syn, ack, psh, fin, rst, urg)\n\n\
-\t-c : number of packets to send\n\n\
+\t-s [address] : source ip address\n\
+\t-d [address] : destination ip address\n\
+\t-l [ttl] : ttl\n\n\
+\t-t [type] : icmp type\n\n\
+\t-o [port] : source port\n\
+\t-p [port] : destination port\n\
+\t-f [flag] : tcp flag (syn, ack, psh, fin, rst, urg)\n\n\
+\t-c [count] : number of packets to send\n\n\
 \t-v : verbose\n\n\
 \t-h : this help message\n\n");
 	exit(EXIT_FAILURE);
@@ -138,7 +139,7 @@ void parser(int argc, char *argv[])
 			verbose = 1;
 			break;
 		case 'c':
-			counter = atoi(optarg);
+			count = atoi(optarg);
 			break;
 		case 'h':
 			print_usage();
@@ -151,7 +152,6 @@ void parser(int argc, char *argv[])
 int main(int argc, char *argv[])
 {
 	signal(SIGINT, sig_close);
-	int ind;
 
 	parser(argc, argv);
 
@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
 	sockfd = init_socket();
 
 	srand(time(NULL));
-	for (ind = 0; ind < counter; ind += 1)
+	for (ind = 0; ind < count; ind += 1)
 		inject();
 
 	close_sock(sockfd);
