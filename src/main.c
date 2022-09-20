@@ -22,7 +22,7 @@
 
 int sockfd;
 unsigned int src_addr = 0, dst_addr = 0;
-unsigned char ttl, protocol = 0, type = 0, tcp_flag = 0;
+unsigned char ttl, protocol = 0, icmp_type = 0, tcp_flag = 0;
 unsigned short src_port = 0, dst_port = 0;
 int verbose = 0, count = 1, ind = 0;
 
@@ -119,7 +119,7 @@ void parser(int argc, char *argv[])
 			ttl = atoi(optarg);
 			break;
 		case 't':
-			type = atoi(optarg);
+			icmp_type = atoi(optarg);
 			break;
 		case 'o':
 			src_port = (unsigned short)atoi(optarg);
