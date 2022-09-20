@@ -18,7 +18,7 @@
 #include "tcp.h"
 #include "udp.h"
 
-#define BUFF_SIZE 4096
+#define BUFF_SIZE 2048
 
 int sockfd;
 unsigned int src_addr = 0, dst_addr = 0;
