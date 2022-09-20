@@ -50,7 +50,7 @@ void inject()
 	switch (protocol) {
 	case IPPROTO_ICMP:
 		icmph = (struct icmp_hdr *)(buffer + sizeof(struct ip_hdr));
-		set_icmp(icmph, type, 0, 1);
+		set_icmp(icmph, icmp_type, 0, 1);
 		break;
 	case IPPROTO_TCP:
 		tcph = (struct tcp_hdr *)(buffer + sizeof(struct ip_hdr));
