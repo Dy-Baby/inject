@@ -31,10 +31,13 @@ static unsigned short tcp_check(struct tcp_hdr *tcph, struct ip_hdr *iph)
 	return check;
 }
 
-void set_tcp(struct tcp_hdr *tcph, struct ip_hdr *iph, unsigned short src,
-	     unsigned short dst, unsigned char flag, unsigned int seq,
-	     unsigned int ack)
+void set_tcp(char *buffer, unsigned short src, unsigned short dst,
+		unsigned char flag, unsigned int seq, unsigned int ack)
 {
+	struct ip_hdr *iph = (struct ip_hdr *)buffer;
+	struct tcp_hdr *tcph = (struct tcp_hdr *)
+		(buffer + sizeof(struct ip_hdr));
+
 	tcph->src = (src) ? htons(src) : htons(rand_port());
 	tcph->dst = (dst) ? htons(dst) : htons(rand_port());
 	tcph->seq = seq;

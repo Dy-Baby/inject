@@ -37,37 +37,31 @@ void inject()
 	char buffer[BUFF_SIZE];
 	int status;
 	struct sockaddr_in sock_dst;
+
+	memset(buffer, 0, BUFF_SIZE);
 	memset(&sock_dst, 0, sizeof(struct sockaddr_in));
 
-	struct ip_hdr *iph = (struct ip_hdr *)buffer;
-	struct icmp_hdr *icmph;
-	struct tcp_hdr *tcph;
-	struct udp_hdr *udph;
-
-	set_ip(iph, src_addr, dst_addr, ttl, protocol);
+	set_ip(buffer, src_addr, dst_addr, ttl, protocol);
 
 	if (!protocol) err_exit("protocol is not valid.");
 	switch (protocol) {
 	case IPPROTO_ICMP:
-		icmph = (struct icmp_hdr *)(buffer + sizeof(struct ip_hdr));
-		set_icmp(icmph, icmp_type, 0, 1);
+		set_icmp(buffer, icmp_type, 0, 1);
 		break;
 	case IPPROTO_TCP:
-		tcph = (struct tcp_hdr *)(buffer + sizeof(struct ip_hdr));
-		set_tcp(tcph, iph, src_port, dst_port, tcp_flag, 1, 1);
+		set_tcp(buffer, src_port, dst_port, tcp_flag, 1, 1);
 		break;
 	case IPPROTO_UDP:
-		udph = (struct udp_hdr *)(buffer + sizeof(struct ip_hdr));
-		set_udp(udph, iph, src_port, dst_port);
+		set_udp(buffer, src_port, dst_port);
 		break;
 	}
 
 	sock_dst.sin_family = AF_INET;
 	sock_dst.sin_addr.s_addr = dst_addr;
 	if (protocol == IPPROTO_TCP || protocol == IPPROTO_UDP)
-		sock_dst.sin_port = (protocol == IPPROTO_TCP) ? tcph->dst : udph->dst;
+		sock_dst.sin_port = dst_port;
 
-	status = send_data(sockfd, buffer, iph->length, &sock_dst);
+	status = send_data(sockfd, buffer, sizeof(struct ip_hdr), &sock_dst);
 
 	if (verbose)
 		output(buffer, protocol, status, ind, count);

@@ -31,9 +31,12 @@ static unsigned short udp_check(struct udp_hdr *udph, struct ip_hdr *iph)
 	return check;
 }
 
-void set_udp(struct udp_hdr *udph, struct ip_hdr *iph, unsigned short src,
-	     unsigned short dst)
+void set_udp(char *buffer, unsigned short src, unsigned short dst)
 {
+	struct ip_hdr *iph = (struct ip_hdr *)buffer;
+	struct udp_hdr *udph = (struct udp_hdr *)
+		(buffer + sizeof(struct ip_hdr));
+
 	udph->src = (src) ? htons(src) : htons(rand_port());
 	udph->dst = (dst) ? htons(dst) : htons(rand_port());
 	udph->length = htons(sizeof(struct udp_hdr));

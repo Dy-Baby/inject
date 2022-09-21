@@ -3,13 +3,14 @@
 #include <netinet/in.h>
 #include "type.h"
 #include "ip.h"
-#include "random.h"
 #include "get_addr.h"
 #include "checksum.h"
 
-void set_ip(struct ip_hdr *iph, unsigned int src, unsigned int dst,
+void set_ip(char *buffer, unsigned int src, unsigned int dst,
 	    unsigned char ttl, unsigned char protocol)
 {
+	struct ip_hdr *iph = (struct ip_hdr *)buffer;
+
 	iph->length = sizeof(struct ip_hdr);
 	switch (protocol) {
 	case IPPROTO_ICMP:

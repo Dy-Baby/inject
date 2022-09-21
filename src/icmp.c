@@ -4,9 +4,12 @@
 #include "icmp.h"
 #include "checksum.h"
 
-void set_icmp(struct icmp_hdr *icmph, unsigned char type, unsigned char code,
-	      unsigned short seq)
+void set_icmp(char *buffer, unsigned char type,
+		unsigned char code, unsigned short seq)
 {
+	struct icmp_hdr *icmph = (struct icmp_hdr *)
+		(*buffer + sizeof(struct ip_hdr));
+
 	icmph->type = type;
 	icmph->code = code;
 	icmph->seq = seq;

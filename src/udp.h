@@ -1,9 +1,6 @@
 #ifndef UDP
 #define UDP
 
-#include "type.h"
-
-void set_udp(struct udp_hdr *udph, struct ip_hdr *iph, unsigned short src,
-	     unsigned short dst);
+void set_udp(char *buffer, unsigned short src, unsigned short dst);
 
 #endif
