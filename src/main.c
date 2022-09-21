@@ -61,7 +61,8 @@ void inject()
 	if (protocol == IPPROTO_TCP || protocol == IPPROTO_UDP)
 		sock_dst.sin_port = dst_port;
 
-	status = send_data(sockfd, buffer, sizeof(struct ip_hdr), &sock_dst);
+	struct ip_hdr *iph = (struct ip_hdr *)buffer;
+	status = send_data(sockfd, buffer, iph->length, &sock_dst);
 
 	if (verbose)
 		output(buffer, protocol, status, ind, count);
