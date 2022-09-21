@@ -28,8 +28,9 @@ int verbose = 0, count = 1, ind = 0;
 
 void sig_close()
 {
+	printf("%d packets injected.\n", ind);
 	close_sock(sockfd);
-	exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 }
 
 void inject()
@@ -159,7 +160,7 @@ int main(int argc, char *argv[])
 	for (ind = 0; ind < count; ind += 1)
 		inject();
 
-	close_sock(sockfd);
+	sig_close();
 
 	return 0;
 }
