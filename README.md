@@ -1,7 +1,7 @@
 Inject
 ---
 
-Inject is a Raw Socket packet crafter.
+Inject is a raw socket packet crafter and injector.
 
 ### Supported Protocols
 - IP (Source address, Destination address, TTL)
