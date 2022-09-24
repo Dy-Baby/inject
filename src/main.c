@@ -18,7 +18,7 @@
 #include "tcp.h"
 #include "udp.h"
 
-#define BUFF_SIZE 2048
+//#define BUFF_SIZE 2048
 
 int sockfd;
 unsigned int src_addr = 0, dst_addr = 0;
@@ -98,7 +98,10 @@ void parser(int argc, char *argv[])
 	if (argc < 2)
 		print_usage();
 
-	if (!strcmp(argv[1], "ip")) protocol = IPPROTO_RAW;
+	if (!strcmp(argv[1], "ip")) {
+		inject_ip(argc, argv);
+		exit(EXIT_SUCCESS);
+	}
 	if (!strcmp(argv[1], "icmp")) protocol = IPPROTO_ICMP;
 	if (!strcmp(argv[1], "tcp")) protocol = IPPROTO_TCP;
 	if (!strcmp(argv[1], "udp")) protocol = IPPROTO_UDP;

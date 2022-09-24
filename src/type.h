@@ -1,6 +1,7 @@
 #ifndef TYPE
 #define TYPE
 
+#define BUFF_SIZE 4096
 #define DEFAULT_TTL 248
 
 struct ip_hdr {

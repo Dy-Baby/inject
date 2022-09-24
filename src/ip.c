@@ -1,10 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+
+#include "sockf.h"
+#include "send.h"
+#include "output.h"
 #include "type.h"
 #include "ip.h"
 #include "get_addr.h"
 #include "checksum.h"
+
+static unsigned int src_addr, dst_addr;
+static unsigned char ttl;
+static int count = 1, verbose = 0;
 
 void set_ip(char *buffer, unsigned int src, unsigned int dst,
 	    unsigned char ttl, unsigned char protocol)
@@ -34,4 +48,78 @@ void set_ip(char *buffer, unsigned int src, unsigned int dst,
 	iph->src = (src) ? src : get_address();
 	iph->dst = dst;
 	iph->check = checksum((unsigned short *)iph, iph->length);
+}
+
+static void ip_usage()
+{
+	printf("\n general options :\n\n\
+\t-c [count] : number of packets to send\n\
+\t-v : verbose\n\n");
+
+	printf("\n IP options :\n\n\
+\t-s [address] : source address\n\
+\t-d [address] : destination address\n\
+\t-t [ttl] : ttl\n\
+\t-h : this help message\n\n");
+	exit(EXIT_FAILURE);
+}
+
+static void parser(int argc, char *argv[])
+{
+	int opt;
+
+	if (argc < 3) ip_usage();
+
+	while ((opt = getopt(argc, argv, "c:vs:d:t:h")) != -1) {
+		switch (opt) {
+		case 'c':
+			count = atoi(optarg);
+			break;
+		case 'v':
+			verbose = 1;
+			break;
+		case 's':
+			src_addr = inet_addr(optarg);
+			break;
+		case 'd':
+			dst_addr = inet_addr(optarg);
+			break;
+		case 't':
+			ttl = atoi(optarg);
+			break;
+		case 'h':
+			ip_usage();
+		case '?':
+			break;
+		}
+	}
+}
+
+void inject_ip(int argc, char *argv[])
+{
+	char buffer[BUFF_SIZE];
+	struct sockaddr_in sock_dst;
+	int sockfd, ind, status;
+
+	memset(buffer, 0, BUFF_SIZE);
+	memset(&sock_dst, 0, sizeof(struct sockaddr_in));
+
+	parser(argc, argv);
+
+	sockfd = init_socket();
+
+	sock_dst.sin_family = AF_INET;
+	sock_dst.sin_addr.s_addr = dst_addr;
+
+	set_ip(buffer, src_addr, dst_addr, ttl, 0);
+
+	struct ip_hdr *iph = (struct ip_hdr *)buffer;
+
+	for (ind = 0; ind < count; ind += 1) {
+		status = send_data(sockfd, buffer, iph->length, &sock_dst);
+		if (verbose)
+			output(buffer, 0, status, ind, count);
+	}
+
+	close_sock(sockfd);
 }
