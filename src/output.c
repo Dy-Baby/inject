@@ -47,27 +47,26 @@ void output(char *buffer, int protocol, int status, int ind, int count)
 	src.sin_addr.s_addr = iph->src;
 	dst.sin_addr.s_addr = iph->dst;
 
-	(!status) ? printf("[%d] [send] ", ind) : printf("[%d] [fail] ", ind);
+	(!status) ? printf("[%d] [send] | ", ind) : printf("[%d] [fail] | ", ind);
 	printf("%s", inet_ntoa(src.sin_addr));
 	printf(" --> ");
 	printf("%s", inet_ntoa(dst.sin_addr));
-	printf(" | ");
 
 	switch (protocol) {
 	case IPPROTO_ICMP:
                 icmph = (struct icmp_hdr *)(buffer + sizeof(struct ip_hdr));
 		get_icmp_type(icmph->type, type_str);
-                printf("type : %d %s | ", icmph->type, type_str);
+                printf(" | type : %d %s", icmph->type, type_str);
 		break;
         case IPPROTO_TCP:
                 tcph = (struct tcp_hdr *)(buffer + sizeof(struct ip_hdr));
 		get_tcp_flag(tcph->flag, flag_str);
-		printf("%d --> %d %s | ", htons(tcph->src), htons(tcph->dst),
+		printf(" | %d --> %d %s", htons(tcph->src), htons(tcph->dst),
 					flag_str);
                 break;
         case IPPROTO_UDP:
                 udph = (struct udp_hdr *)(buffer + sizeof(struct ip_hdr));
-		printf("%d --> %d | ", htons(udph->src), htons(udph->dst));
+		printf(" | %d --> %d", htons(udph->src), htons(udph->dst));
                 break;
 	}
 	printf("\n");
