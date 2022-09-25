@@ -101,7 +101,7 @@ void parser(int argc, char *argv[])
 	if (!strcmp(argv[1], "ip")) inject_ip(argc, argv);
 	if (!strcmp(argv[1], "icmp")) inject_icmp(argc, argv);
 	if (!strcmp(argv[1], "tcp")) inject_tcp(argc, argv);
-	if (!strcmp(argv[1], "udp")) protocol = IPPROTO_UDP;
+	if (!strcmp(argv[1], "udp")) inject_udp(argc, argv);
 
 	while ((opt = getopt(argc, argv, "s:d:l:t:o:p:f:c:vh")) != -1) {
 		switch (opt) {
