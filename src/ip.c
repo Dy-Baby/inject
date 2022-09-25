@@ -56,7 +56,7 @@ static void ip_usage()
 	printf("\n general options :\n\n\
 \t-c [count] : number of packets to send\n\
 \t-v : verbose\n\
-\t-h : this help message\n\n");
+\t-h : this help message\n");
 
 	printf("\n IP options :\n\n\
 \t-s [address] : source address\n\

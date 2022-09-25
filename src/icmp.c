@@ -40,12 +40,12 @@ static void icmp_usage()
 	printf("\n general options :\n\n\
 \t-c [count] : number of packets to send\n\
 \t-v : verbose\n\
-\t-h : this help message\n\n");
+\t-h : this help message\n");
 
         printf("\n IP options :\n\n\
 \t-s [address] : source address\n\
 \t-d [address] : destination address\n\
-\t-t [ttl] : ttl\n\n");
+\t-t [ttl] : ttl\n");
 
 	printf("\n ICMP options :\n\n\
 \t-T [type] : icmp type\n\
