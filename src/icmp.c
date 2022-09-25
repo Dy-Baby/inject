@@ -106,11 +106,11 @@ void inject_icmp(int argc, char *argv[])
 	sock_dst.sin_addr.s_addr = dst_addr;
 
 	if (!dst_addr) err_exit("destination address not specified.");
-	set_ip(buffer, src_addr, dst_addr, ttl, IPPROTO_ICMP);
 
+	set_ip(buffer, 0, src_addr, dst_addr, ttl, IPPROTO_ICMP);
 	set_icmp(buffer, icmp_type, icmp_code, 0);
-	struct ip_hdr *iph = (struct ip_hdr *)buffer;
 
+	struct ip_hdr *iph = (struct ip_hdr *)buffer;
 	for (ind = 0; ind < count; ind += 1) {
 		status = send_data(sockfd, buffer, iph->length, &sock_dst);
 		if (verbose)

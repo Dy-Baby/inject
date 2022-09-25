@@ -21,8 +21,9 @@ static unsigned int src_addr, dst_addr;
 static unsigned char ttl;
 static int count = 1, verbose = 0;
 
-void set_ip(char *buffer, unsigned int src, unsigned int dst,
-	    unsigned char ttl, unsigned char protocol)
+void set_ip(char *buffer, size_t payload_size,
+		unsigned int src, unsigned int dst,
+		unsigned char ttl, unsigned char protocol)
 {
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;
 
@@ -38,6 +39,7 @@ void set_ip(char *buffer, unsigned int src, unsigned int dst,
 		iph->length += sizeof(struct tcp_hdr);
 		break;
 	}
+	iph->length += payload_size;
 
 	iph->ver_ihl = 0x45;
 	iph->service = 0x00;
@@ -112,10 +114,10 @@ void inject_ip(int argc, char *argv[])
 	sock_dst.sin_addr.s_addr = dst_addr;
 
 	if (!dst_addr) err_exit("destination address not specified.");
-	set_ip(buffer, src_addr, dst_addr, ttl, 0);
+
+	set_ip(buffer, 0, src_addr, dst_addr, ttl, 0);
 
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;
-
 	for (ind = 0; ind < count; ind += 1) {
 		status = send_data(sockfd, buffer, iph->length, &sock_dst);
 		if (verbose)

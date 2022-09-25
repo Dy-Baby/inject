@@ -11,6 +11,7 @@
 
 #include "sockf.h"
 #include "send.h"
+#include "data.h"
 #include "error_func.h"
 #include "output.h"
 #include "type.h"
@@ -23,37 +24,47 @@ static unsigned int src_addr, dst_addr;
 static unsigned char ttl, tcp_flag;
 static unsigned short src_port, dst_port;
 static int count = 1, verbose = 0;
+static char *file_name = NULL;
 
-static unsigned short tcp_check(struct tcp_hdr *tcph, struct ip_hdr *iph)
+static unsigned short tcp_check(struct ip_hdr *iph, struct tcp_hdr *tcph,
+				char *payload, size_t payload_size)
 {
 	struct psd_hdr psh;
 	char *psd;
+	size_t psd_size;
 	unsigned short check;
 
 	psh.src = iph->src;
 	psh.dst = iph->dst;
 	psh.placeholder = 0;
 	psh.protocol = IPPROTO_TCP;
-	psh.length = htons(sizeof(struct tcp_hdr));
+	psh.length = htons(sizeof(struct tcp_hdr) + payload_size);
 
-	psd = malloc(sizeof(struct tcp_hdr) + sizeof(struct psd_hdr));
+	psd_size = sizeof(struct psd_hdr) + sizeof(struct tcp_hdr) + payload_size;
+
+	psd = malloc(psd_size);
+	memset(psd, 0, psd_size);
+
 	memcpy(psd, (char *)&psh, sizeof(struct psd_hdr));
 	memcpy(psd + sizeof(struct psd_hdr), tcph, sizeof(struct tcp_hdr));
+	memcpy(psd + sizeof(struct psd_hdr) + sizeof(struct tcp_hdr),
+			payload, payload_size);
 
-	check = checksum((unsigned short *)psd,
-			 sizeof(struct tcp_hdr) + sizeof(struct psd_hdr));
+	check = checksum((unsigned short *)psd, psd_size);
+
 	free(psd);
-
 	return check;
 }
 
-void set_tcp(char *buffer, unsigned short src, unsigned short dst,
+void set_tcp(char *buffer, char *payload, size_t payload_size,
+		unsigned short src, unsigned short dst,
 		unsigned char flag, unsigned int seq, unsigned int ack)
 {
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;
-	struct tcp_hdr *tcph = (struct tcp_hdr *)
-		(buffer + sizeof(struct ip_hdr));
+	struct tcp_hdr *tcph = (struct tcp_hdr *)(buffer + sizeof(struct ip_hdr));
+	char *ptr = (buffer + sizeof(struct ip_hdr) + sizeof(struct tcp_hdr));
 
+	strncat(ptr, payload, payload_size);
 	tcph->src = (src) ? htons(src) : htons(rand_port());
 	tcph->dst = (dst) ? htons(dst) : htons(rand_port());
 	tcph->seq = seq;
@@ -63,7 +74,7 @@ void set_tcp(char *buffer, unsigned short src, unsigned short dst,
 	tcph->win = 0x0fff;
 	tcph->check = 0;
 	tcph->urgp = 0x0;
-	tcph->check = tcp_check(tcph, iph);
+	tcph->check = tcp_check(iph, tcph, payload, payload_size);
 }
 
 static void tcp_usage()
@@ -81,7 +92,8 @@ static void tcp_usage()
 	printf("\n TCP options :\n\n\
 \t-S [port] : source port\n\
 \t-D [port] : destination port\n\
-\t-f [flag] : tcp flag (syn, ack, psh, fin, rst, urg)\n\n");
+\t-f [flag] : tcp flag (syn, ack, psh, fin, rst, urg)\n\
+\t-a [file name] : file that contains data\n\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -101,7 +113,7 @@ static void parser(int argc, char *argv[])
 
         if (argc < 3) tcp_usage();
 
-        while ((opt = getopt(argc, argv, "c:vhs:d:t:S:D:f:")) != -1) {
+        while ((opt = getopt(argc, argv, "c:vhs:d:t:S:D:f:a:")) != -1) {
                 switch (opt) {
                 case 'c':
                         count = atoi(optarg);
@@ -129,6 +141,9 @@ static void parser(int argc, char *argv[])
 		case 'f':
 			parse_tcp_flag(optarg);
 			break;
+		case 'a':
+			file_name = optarg;
+			break;
                 case '?':
                         break;
                 }
@@ -137,9 +152,10 @@ static void parser(int argc, char *argv[])
 
 void inject_tcp(int argc, char *argv[])
 {
-       char buffer[BUFF_SIZE];
+       char buffer[BUFF_SIZE], *payload = NULL;
        struct sockaddr_in sock_dst;
        int sockfd, ind, status;
+       size_t payload_size = 0;
 
        srand(time(NULL));
        memset(buffer, 0, BUFF_SIZE);
@@ -153,17 +169,25 @@ void inject_tcp(int argc, char *argv[])
        sock_dst.sin_port = dst_port;
 
        if (!dst_addr) err_exit("destination address not specified.");
-       set_ip(buffer, src_addr, dst_addr, ttl, IPPROTO_TCP);
 
-       set_tcp(buffer, src_port, dst_port, tcp_flag, 1, 1);
+       if (file_name) {
+	       if ((payload = read_file(file_name)) == NULL)
+		       exit(EXIT_FAILURE);
+	       payload_size = strlen(payload);
+       }
+
+       set_ip(buffer, payload_size, src_addr, dst_addr, ttl, IPPROTO_TCP);
+       set_tcp(buffer, payload, payload_size, src_port, dst_port, tcp_flag, 1, 1);
+
        struct ip_hdr *iph = (struct ip_hdr *)buffer;
-
        for (ind = 0; ind < count; ind += 1) {
                status = send_data(sockfd, buffer, iph->length, &sock_dst);
                if (verbose)
                        output(buffer, IPPROTO_TCP, status, ind, count);
        }
 
+       if (file_name) free(payload);
        close_sock(sockfd);
+
        exit(EXIT_SUCCESS);
 }
