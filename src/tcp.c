@@ -11,6 +11,7 @@
 
 #include "sockf.h"
 #include "send.h"
+#include "error_func.h"
 #include "output.h"
 #include "type.h"
 #include "ip.h"
@@ -151,7 +152,9 @@ void inject_tcp(int argc, char *argv[])
        sock_dst.sin_addr.s_addr = dst_addr;
        sock_dst.sin_port = dst_port;
 
+       if (!dst_addr) err_exit("destination address not specified.");
        set_ip(buffer, src_addr, dst_addr, ttl, IPPROTO_TCP);
+
        set_tcp(buffer, src_port, dst_port, tcp_flag, 1, 1);
        struct ip_hdr *iph = (struct ip_hdr *)buffer;
 

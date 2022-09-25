@@ -11,6 +11,7 @@
 
 #include "sockf.h"
 #include "send.h"
+#include "error_func.h"
 #include "output.h"
 #include "type.h"
 #include "ip.h"
@@ -131,7 +132,9 @@ void inject_udp(int argc, char *argv[])
        sock_dst.sin_addr.s_addr = dst_addr;
        sock_dst.sin_port = dst_port;
 
+       if (!dst_addr) err_exit("destination address not specified.");
        set_ip(buffer, src_addr, dst_addr, ttl, IPPROTO_UDP);
+
        set_udp(buffer, src_port, dst_port);
        struct ip_hdr *iph = (struct ip_hdr *)buffer;
 
