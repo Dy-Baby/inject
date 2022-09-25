@@ -98,11 +98,8 @@ void parser(int argc, char *argv[])
 	if (argc < 2)
 		print_usage();
 
-	if (!strcmp(argv[1], "ip")) {
-		inject_ip(argc, argv);
-		exit(EXIT_SUCCESS);
-	}
-	if (!strcmp(argv[1], "icmp")) protocol = IPPROTO_ICMP;
+	if (!strcmp(argv[1], "ip")) inject_ip(argc, argv);
+	if (!strcmp(argv[1], "icmp")) inject_icmp(argc, argv);
 	if (!strcmp(argv[1], "tcp")) protocol = IPPROTO_TCP;
 	if (!strcmp(argv[1], "udp")) protocol = IPPROTO_UDP;
 

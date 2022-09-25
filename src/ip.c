@@ -54,13 +54,13 @@ static void ip_usage()
 {
 	printf("\n general options :\n\n\
 \t-c [count] : number of packets to send\n\
-\t-v : verbose\n\n");
+\t-v : verbose\n\
+\t-h : this help message\n\n");
 
 	printf("\n IP options :\n\n\
 \t-s [address] : source address\n\
 \t-d [address] : destination address\n\
-\t-t [ttl] : ttl\n\
-\t-h : this help message\n\n");
+\t-t [ttl] : ttl\n\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -70,7 +70,7 @@ static void parser(int argc, char *argv[])
 
 	if (argc < 3) ip_usage();
 
-	while ((opt = getopt(argc, argv, "c:vs:d:t:h")) != -1) {
+	while ((opt = getopt(argc, argv, "c:vhs:d:t:")) != -1) {
 		switch (opt) {
 		case 'c':
 			count = atoi(optarg);
@@ -78,6 +78,8 @@ static void parser(int argc, char *argv[])
 		case 'v':
 			verbose = 1;
 			break;
+		case 'h':
+			ip_usage();
 		case 's':
 			src_addr = inet_addr(optarg);
 			break;
@@ -87,8 +89,6 @@ static void parser(int argc, char *argv[])
 		case 't':
 			ttl = atoi(optarg);
 			break;
-		case 'h':
-			ip_usage();
 		case '?':
 			break;
 		}
@@ -107,7 +107,6 @@ void inject_ip(int argc, char *argv[])
 	parser(argc, argv);
 
 	sockfd = init_socket();
-
 	sock_dst.sin_family = AF_INET;
 	sock_dst.sin_addr.s_addr = dst_addr;
 
@@ -122,4 +121,5 @@ void inject_ip(int argc, char *argv[])
 	}
 
 	close_sock(sockfd);
+	exit(EXIT_SUCCESS);
 }
