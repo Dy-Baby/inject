@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -119,6 +120,7 @@ void inject_udp(int argc, char *argv[])
        struct sockaddr_in sock_dst;
        int sockfd, ind, status;
 
+       srand(time(NULL));
        memset(buffer, 0, BUFF_SIZE);
        memset(&sock_dst, 0, sizeof(struct sockaddr_in));
 
