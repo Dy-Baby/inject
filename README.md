@@ -16,16 +16,19 @@ Inject is a raw socket packet crafter and injector.
     `make clean`
 
 ### Example Usages
+* IP packet :
+    `./inject ip -s 192.168.1.50 -d 192.168.1.1`
+
 * ICMP echo request :
-    `./inject icmp -s 192.168.1.50 -d 192.168.1.1 -t 8`
+    `./inject icmp -s 192.168.1.50 -d 192.168.1.1 -T 8`
 
 * TCP syn packet :
-     `./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 - p 80 -f syn`
+     `./inject tcp -s 192.168.1.50 -d 192.168.1.1 -S 5000 -D 80 -f syn`
 > you can use multiple flags together.
 
 * TCP syn, ack packet
-     `./inject tcp -s 192.168.1.50 -d 192.168.1.1 -o 5000 - p 80 -f syn -f ack`
+     `./inject tcp -s 192.168.1.50 -d 192.168.1.1 -S 5000 - D 80 -f syn -f ack`
 
 * UDP packet
-     `./inject udp -s 192.168.1.50 -d 192.168.1.1 -o 5000 - p 4000`
+     `./inject udp -s 192.168.1.50 -d 192.168.1.1 -S 5000 -D 4000`
 
