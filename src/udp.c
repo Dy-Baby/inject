@@ -11,6 +11,7 @@
 
 #include "sockf.h"
 #include "send.h"
+#include "data.h"
 #include "error_func.h"
 #include "output.h"
 #include "type.h"
@@ -23,41 +24,51 @@ static unsigned int src_addr, dst_addr;
 static unsigned char ttl;
 static unsigned short src_port, dst_port;
 static int count = 1, verbose = 0;
+static char *file_name = NULL;
 
-static unsigned short udp_check(struct udp_hdr *udph, struct ip_hdr *iph)
+static unsigned short udp_check(struct ip_hdr *iph, struct udp_hdr *udph,
+				char *payload, size_t payload_size)
 {
 	struct psd_hdr psh;
 	char *psd;
+	size_t psd_size;
 	unsigned short check;
 
 	psh.src = iph->src;
 	psh.dst = iph->dst;
 	psh.placeholder = 0;
 	psh.protocol = IPPROTO_UDP;
-	psh.length = htons(sizeof(struct udp_hdr));
+	psh.length = htons(sizeof(struct udp_hdr) + payload_size);
 
-	psd = malloc(sizeof(struct udp_hdr) + sizeof(struct psd_hdr));
+	psd_size = sizeof(struct psd_hdr) + sizeof(struct udp_hdr) + payload_size;
+
+	psd = malloc(psd_size);
+	memset(psd, 0, psd_size);
+
 	memcpy(psd, (char *)&psh, sizeof(struct psd_hdr));
 	memcpy(psd + sizeof(struct psd_hdr), udph, sizeof(struct udp_hdr));
+	memcpy(psd + sizeof(struct psd_hdr) + sizeof(struct udp_hdr),
+			payload, payload_size);
 
-	check = checksum((unsigned short *)psd,
-			 sizeof(struct udp_hdr) + sizeof(struct psd_hdr));
+	check = checksum((unsigned short *)psd, psd_size);
 	free(psd);
 
 	return check;
 }
 
-void set_udp(char *buffer, unsigned short src, unsigned short dst)
+void set_udp(char *buffer, char *payload, size_t payload_size,
+		unsigned short src, unsigned short dst)
 {
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;
-	struct udp_hdr *udph = (struct udp_hdr *)
-		(buffer + sizeof(struct ip_hdr));
+	struct udp_hdr *udph = (struct udp_hdr *)(buffer + sizeof(struct ip_hdr));
+	char *ptr = (buffer + sizeof(struct ip_hdr) + sizeof(struct udp_hdr));
 
+	strncat(ptr, payload, payload_size);
 	udph->src = (src) ? htons(src) : htons(rand_port());
 	udph->dst = (dst) ? htons(dst) : htons(rand_port());
-	udph->length = htons(sizeof(struct udp_hdr));
+	udph->length = htons(sizeof(struct udp_hdr) + payload_size);
 	udph->check = 0;
-	udph->check = udp_check(udph, iph);
+	udph->check = udp_check(iph, udph, payload, payload_size);
 }
 
 static void udp_usage()
@@ -74,7 +85,8 @@ static void udp_usage()
 
         printf("\n UDP options :\n\n\
 \t-S [port] : source port\n\
-\t-D [port] : destination port\n\n");
+\t-D [port] : destination port\n\
+\t-a [file name] : file that contains data\n\n");
         exit(EXIT_FAILURE);
 }
 
@@ -84,7 +96,7 @@ static void parser(int argc, char *argv[])
 
         if (argc < 3) udp_usage();
 
-        while ((opt = getopt(argc, argv, "c:vhs:d:t:S:D:")) != -1) {
+        while ((opt = getopt(argc, argv, "c:vhs:d:t:S:D:a:")) != -1) {
                 switch (opt) {
                 case 'c':
                         count = atoi(optarg);
@@ -109,6 +121,9 @@ static void parser(int argc, char *argv[])
                 case 'D':
                         dst_port = atoi(optarg);
                         break;
+		case 'a':
+			file_name = optarg;
+			break;
                 case '?':
                         break;
                 }
@@ -117,9 +132,10 @@ static void parser(int argc, char *argv[])
 
 void inject_udp(int argc, char *argv[])
 {
-       char buffer[BUFF_SIZE];
+       char buffer[BUFF_SIZE], *payload;
        struct sockaddr_in sock_dst;
        int sockfd, ind, status;
+       size_t payload_size = 0;
 
        srand(time(NULL));
        memset(buffer, 0, BUFF_SIZE);
@@ -134,8 +150,14 @@ void inject_udp(int argc, char *argv[])
 
        if (!dst_addr) err_exit("destination address not specified.");
 
-       set_ip(buffer, 0, src_addr, dst_addr, ttl, IPPROTO_UDP);
-       set_udp(buffer, src_port, dst_port);
+       if (file_name) {
+	       if ((payload = read_file(file_name)) == NULL)
+		       exit(EXIT_FAILURE);
+	       payload_size = strlen(payload);
+       }
+
+       set_ip(buffer, payload_size, src_addr, dst_addr, ttl, IPPROTO_UDP);
+       set_udp(buffer, payload, payload_size, src_port, dst_port);
 
        struct ip_hdr *iph = (struct ip_hdr *)buffer;
        for (ind = 0; ind < count; ind += 1) {
@@ -144,6 +166,8 @@ void inject_udp(int argc, char *argv[])
                        output(buffer, IPPROTO_UDP, status, ind, count);
        }
 
+       if (file_name) free(payload);
        close_sock(sockfd);
+
        exit(EXIT_SUCCESS);
 }

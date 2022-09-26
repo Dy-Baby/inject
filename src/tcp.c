@@ -51,8 +51,8 @@ static unsigned short tcp_check(struct ip_hdr *iph, struct tcp_hdr *tcph,
 			payload, payload_size);
 
 	check = checksum((unsigned short *)psd, psd_size);
-
 	free(psd);
+
 	return check;
 }
 
