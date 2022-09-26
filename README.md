@@ -6,8 +6,8 @@ Inject is a raw socket packet crafter and injector.
 ### Supported Protocols
 - IP (Source address, Destination address, TTL)
 - ICMP (ICMP Type)
-- TCP (Source port, Destination port, TCP Flag)
-- UDP (Source port, Destination port)
+- TCP (Source port, Destination port, TCP Flag, Data)
+- UDP (Source port, Destination port, Data)
 
 ### Installation
 * For installation, go to the project directory and compile with : 
