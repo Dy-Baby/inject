@@ -96,10 +96,10 @@ void inject_icmp(int argc, char *argv[])
 	struct sockaddr_in sock_dst;
 	int sockfd, ind, status;
 
+	parser(argc, argv);
+
 	memset(buffer, 0, BUFF_SIZE);
 	memset(&sock_dst, 0, sizeof(struct sockaddr_in));
-
-	parser(argc, argv);
 
 	sockfd = init_socket();
 	sock_dst.sin_family = AF_INET;

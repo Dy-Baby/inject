@@ -157,11 +157,11 @@ void inject_tcp(int argc, char *argv[])
        int sockfd, ind, status;
        size_t payload_size = 0;
 
+       parser(argc, argv);
+
        srand(time(NULL));
        memset(buffer, 0, BUFF_SIZE);
        memset(&sock_dst, 0, sizeof(struct sockaddr_in));
-
-       parser(argc, argv);
 
        sockfd = init_socket();
        sock_dst.sin_family = AF_INET;
