@@ -86,7 +86,7 @@ static void udp_usage()
         printf("\n UDP options :\n\n\
 \t-S [port] : source port\n\
 \t-D [port] : destination port\n\
-\t-a [file name] : file that contains data\n\n");
+\t-a [file] : payload file\n\n");
         exit(EXIT_FAILURE);
 }
 
