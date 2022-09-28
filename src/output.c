@@ -37,9 +37,17 @@ static void get_tcp_flag(unsigned char flag, char *flag_str)
 
 void print_ip(char *buffer)
 {
-	//struct ip_hdr *iph;
+	struct sockaddr_in src, dst;
+	struct ip_hdr *iph = (struct ip_hdr *)buffer;
 
-	printf("HAhA IP header\n");
+	src.sin_addr.s_addr = iph->src;
+	dst.sin_addr.s_addr = iph->dst;
+
+	printf("IP source : %s\n", inet_ntoa(src.sin_addr));
+	printf("IP destination : %s\n", inet_ntoa(dst.sin_addr));
+	printf("IP ttl : %d\n", iph->ttl);
+	printf("IP id : %d\n", iph->ident);
+	printf("IP check : %x\n", iph->check);
 }
 
 void print_icmp(char *buffer)

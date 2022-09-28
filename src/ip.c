@@ -43,7 +43,7 @@ void set_ip(char *buffer, size_t payload_size,
 
 	iph->ver_ihl = 0x45;
 	iph->service = 0x00;
-	iph->ident = 0x00;
+	iph->ident = htons(getpid());
 	iph->frag = 0x00;
 	iph->ttl = (ttl) ? ttl : DEFAULT_TTL;
 	iph->protocol = protocol;
