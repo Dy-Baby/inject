@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <string.h>
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
 #include "output.h"
 #include "type.h"
 
@@ -33,41 +35,49 @@ static void get_tcp_flag(unsigned char flag, char *flag_str)
         if ((flag | 32) == flag) strcat(flag_str, "urg,");
 }
 
-void output(char *buffer, int protocol, int status, int ind, int count)
+void print_ip(char *buffer)
 {
-	struct sockaddr_in src, dst;
-	struct ip_hdr *iph = (struct ip_hdr *)buffer;
-	struct icmp_hdr *icmph;
-	struct tcp_hdr *tcph;
-	struct udp_hdr *udph;
+	//struct ip_hdr *iph;
 
-	char flag_str[24], type_str[50];
+	printf("HAhA IP header\n");
+}
 
-	memset(flag_str, 0, 24);
-	src.sin_addr.s_addr = iph->src;
-	dst.sin_addr.s_addr = iph->dst;
+void print_icmp(char *buffer)
+{
+	struct icmp_hdr *icmph = (struct icmp_hdr *)(buffer + sizeof(struct ip_hdr));
+	char type_str[50];
 
-	(!status) ? printf("[%d] [send] | ", ind) : printf("[%d] [fail] | ", ind);
-	printf("%s", inet_ntoa(src.sin_addr));
-	printf(" --> ");
-	printf("%s", inet_ntoa(dst.sin_addr));
+	memset(type_str, 0, 50);
+	get_icmp_type(icmph->type, type_str);
 
-	switch (protocol) {
-	case IPPROTO_ICMP:
-                icmph = (struct icmp_hdr *)(buffer + sizeof(struct ip_hdr));
-		get_icmp_type(icmph->type, type_str);
-                printf(" | type : %d %s", icmph->type, type_str);
-		break;
-        case IPPROTO_TCP:
-                tcph = (struct tcp_hdr *)(buffer + sizeof(struct ip_hdr));
-		get_tcp_flag(tcph->flag, flag_str);
-		printf(" | %d --> %d %s", htons(tcph->src), htons(tcph->dst),
-					flag_str);
-                break;
-        case IPPROTO_UDP:
-                udph = (struct udp_hdr *)(buffer + sizeof(struct ip_hdr));
-		printf(" | %d --> %d", htons(udph->src), htons(udph->dst));
-                break;
-	}
-	printf("\n");
+	printf("ICMP type : %s\n", type_str);
+	printf("ICMP code : %d\n", icmph->code);
+	printf("ICMP id : %d\n", icmph->id);
+	printf("ICMP seq : %d\n", icmph->seq);
+	printf("ICMP check : %x\n", icmph->check);
+}
+
+void print_tcp(char *buffer)
+{
+	struct tcp_hdr *tcph = (struct tcp_hdr *)(buffer + sizeof(struct ip_hdr));
+	char flag_str[32];
+
+	memset(flag_str, 0, 32);
+	get_tcp_flag(tcph->flag, flag_str);
+
+	printf("TCP source : %d\n", htons(tcph->src));
+	printf("TCP destination : %d\n", htons(tcph->dst));
+	printf("TCP seq : %d\n", tcph->seq);
+	printf("TCP ack : %d\n", tcph->ack);
+	printf("TCP flag : %s\n", flag_str);
+	printf("TCP check : %x\n", tcph->check);
+}
+
+void print_udp(char *buffer)
+{
+	struct udp_hdr *udph = (struct udp_hdr *)(buffer + sizeof(struct ip_hdr));
+
+	printf("UDP source : %d\n", htons(udph->src));
+	printf("UDP destination : %d\n", htons(udph->dst));
+	printf("UDP checksum : %x\n", udph->check);
 }

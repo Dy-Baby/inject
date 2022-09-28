@@ -94,7 +94,7 @@ void inject_icmp(int argc, char *argv[])
 {
 	char buffer[BUFF_SIZE];
 	struct sockaddr_in sock_dst;
-	int sockfd, ind, status;
+	int sockfd, ind;
 
 	parser(argc, argv);
 	if (!dst_addr) err_exit("destination address not specified.");
@@ -110,10 +110,12 @@ void inject_icmp(int argc, char *argv[])
 	set_icmp(buffer, icmp_type, icmp_code, 0);
 
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;
-	for (ind = 0; ind < count; ind += 1) {
-		status = send_data(sockfd, buffer, iph->length, &sock_dst);
-		if (verbose)
-			output(buffer, IPPROTO_ICMP, status, ind, count);
+	for (ind = 0; ind < count; ind += 1)
+		send_data(sockfd, buffer, iph->length, &sock_dst);
+
+	if (verbose) {
+		print_ip(buffer);
+		print_icmp(buffer);
 	}
 
 	close_sock(sockfd);

@@ -102,7 +102,7 @@ void inject_ip(int argc, char *argv[])
 {
 	char buffer[BUFF_SIZE];
 	struct sockaddr_in sock_dst;
-	int sockfd, ind, status;
+	int sockfd, ind;
 
 	parser(argc, argv);
 	if (!dst_addr) err_exit("destination address not specified.");
@@ -117,11 +117,11 @@ void inject_ip(int argc, char *argv[])
 	set_ip(buffer, 0, src_addr, dst_addr, ttl, 0);
 
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;
-	for (ind = 0; ind < count; ind += 1) {
-		status = send_data(sockfd, buffer, iph->length, &sock_dst);
-		if (verbose)
-			output(buffer, 0, status, ind, count);
-	}
+	for (ind = 0; ind < count; ind += 1)
+		send_data(sockfd, buffer, iph->length, &sock_dst);
+
+	if (verbose)
+		print_ip(buffer);
 
 	close_sock(sockfd);
 	exit(EXIT_SUCCESS);

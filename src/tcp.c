@@ -154,7 +154,7 @@ void inject_tcp(int argc, char *argv[])
 {
        char buffer[BUFF_SIZE], *payload = NULL;
        struct sockaddr_in sock_dst;
-       int sockfd, ind, status;
+       int sockfd, ind;
        size_t payload_size = 0;
 
        parser(argc, argv);
@@ -179,10 +179,12 @@ void inject_tcp(int argc, char *argv[])
        set_tcp(buffer, payload, payload_size, src_port, dst_port, tcp_flag, 1, 1);
 
        struct ip_hdr *iph = (struct ip_hdr *)buffer;
-       for (ind = 0; ind < count; ind += 1) {
-               status = send_data(sockfd, buffer, iph->length, &sock_dst);
-               if (verbose)
-                       output(buffer, IPPROTO_TCP, status, ind, count);
+       for (ind = 0; ind < count; ind += 1)
+               send_data(sockfd, buffer, iph->length, &sock_dst);
+
+       if (verbose) {
+	       print_ip(buffer);
+	       print_tcp(buffer);
        }
 
        if (file_name) free(payload);

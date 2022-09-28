@@ -134,7 +134,7 @@ void inject_udp(int argc, char *argv[])
 {
        char buffer[BUFF_SIZE], *payload;
        struct sockaddr_in sock_dst;
-       int sockfd, ind, status;
+       int sockfd, ind;
        size_t payload_size = 0;
 
        parser(argc, argv);
@@ -159,10 +159,12 @@ void inject_udp(int argc, char *argv[])
        set_udp(buffer, payload, payload_size, src_port, dst_port);
 
        struct ip_hdr *iph = (struct ip_hdr *)buffer;
-       for (ind = 0; ind < count; ind += 1) {
-               status = send_data(sockfd, buffer, iph->length, &sock_dst);
-               if (verbose)
-                       output(buffer, IPPROTO_UDP, status, ind, count);
+       for (ind = 0; ind < count; ind += 1)
+               send_data(sockfd, buffer, iph->length, &sock_dst);
+
+       if (verbose) {
+	       print_ip(buffer);
+	       print_udp(buffer);
        }
 
        if (file_name) free(payload);
