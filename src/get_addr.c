@@ -21,8 +21,7 @@ unsigned int get_address()
 	}
 
 	for (temp = addr; temp != NULL; temp = temp->ifa_next) {
-		if (temp->ifa_addr == NULL)
-			continue;
+		if (temp->ifa_addr == NULL) continue;
 
 		if (temp->ifa_addr->sa_family == AF_INET &&
 		    strcmp(temp->ifa_name, "lo")) {

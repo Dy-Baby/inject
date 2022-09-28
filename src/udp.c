@@ -138,6 +138,7 @@ void inject_udp(int argc, char *argv[])
        size_t payload_size = 0;
 
        parser(argc, argv);
+       if (!dst_addr) err_exit("destination address not specified.");
 
        srand(time(NULL));
        memset(buffer, 0, BUFF_SIZE);
@@ -147,8 +148,6 @@ void inject_udp(int argc, char *argv[])
        sock_dst.sin_family = AF_INET;
        sock_dst.sin_addr.s_addr = dst_addr;
        sock_dst.sin_port = dst_port;
-
-       if (!dst_addr) err_exit("destination address not specified.");
 
        if (file_name) {
 	       if ((payload = read_file(file_name)) == NULL)

@@ -97,6 +97,7 @@ void inject_icmp(int argc, char *argv[])
 	int sockfd, ind, status;
 
 	parser(argc, argv);
+	if (!dst_addr) err_exit("destination address not specified.");
 
 	memset(buffer, 0, BUFF_SIZE);
 	memset(&sock_dst, 0, sizeof(struct sockaddr_in));
@@ -104,8 +105,6 @@ void inject_icmp(int argc, char *argv[])
 	sockfd = init_socket();
 	sock_dst.sin_family = AF_INET;
 	sock_dst.sin_addr.s_addr = dst_addr;
-
-	if (!dst_addr) err_exit("destination address not specified.");
 
 	set_ip(buffer, 0, src_addr, dst_addr, ttl, IPPROTO_ICMP);
 	set_icmp(buffer, icmp_type, icmp_code, 0);
