@@ -85,13 +85,13 @@ static void tcp_usage()
 \t-h : this help message\n");
 
         printf("\n IP options :\n\n\
-\t-s [address] : source address\n\
-\t-d [address] : destination address\n\
-\t-t [ttl] : ttl\n");
+\t-S [address] : source address\n\
+\t-D [address] : destination address\n\
+\t-T [ttl] : ttl\n");
 
 	printf("\n TCP options :\n\n\
-\t-S [port] : source port\n\
-\t-D [port] : destination port\n\
+\t-s [port] : source port\n\
+\t-d [port] : destination port\n\
 \t-f [flag] : tcp flag (syn, ack, psh, fin, rst, urg)\n\
 \t-a [file] : payload file\n\n");
 	exit(EXIT_FAILURE);
@@ -113,7 +113,7 @@ static void parser(int argc, char *argv[])
 
         if (argc < 3) tcp_usage();
 
-        while ((opt = getopt(argc, argv, "c:vhs:d:t:S:D:f:a:")) != -1) {
+        while ((opt = getopt(argc, argv, "c:vhS:D:T:s:d:f:a:")) != -1) {
                 switch (opt) {
                 case 'c':
                         count = atoi(optarg);
@@ -123,19 +123,19 @@ static void parser(int argc, char *argv[])
                         break;
                 case 'h':
                         tcp_usage();
-                case 's':
+                case 'S':
                         src_addr = inet_addr(optarg);
                         break;
-                case 'd':
+                case 'D':
                         dst_addr = inet_addr(optarg);
                         break;
-                case 't':
+                case 'T':
                         ttl = atoi(optarg);
                         break;
-                case 'S':
+                case 's':
                         src_port = atoi(optarg);
                         break;
-                case 'D':
+                case 'd':
                         dst_port = atoi(optarg);
                         break;
 		case 'f':

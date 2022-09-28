@@ -43,12 +43,12 @@ static void icmp_usage()
 \t-h : this help message\n");
 
         printf("\n IP options :\n\n\
-\t-s [address] : source address\n\
-\t-d [address] : destination address\n\
-\t-t [ttl] : ttl\n");
+\t-S [address] : source address\n\
+\t-D [address] : destination address\n\
+\t-T [ttl] : ttl\n");
 
 	printf("\n ICMP options :\n\n\
-\t-T [type] : icmp type\n\
+\t-t [type] : icmp type\n\
 \t-C [code] : icmp code\n\n");
 	exit(EXIT_FAILURE);
 }
@@ -59,7 +59,7 @@ static void parser(int argc, char *argv[])
 
 	if (argc < 3) icmp_usage();
 
-	while ((opt = getopt(argc, argv, "c:vhs:d:t:T:C:")) != -1) {
+	while ((opt = getopt(argc, argv, "c:vhS:D:T:t:C:")) != -1) {
 		switch (opt) {
 		case 'c':
 			count = atoi(optarg);
@@ -69,16 +69,16 @@ static void parser(int argc, char *argv[])
 			break;
 		case 'h':
 			icmp_usage();
-		case 's':
+		case 'S':
 			src_addr = inet_addr(optarg);
 			break;
-		case 'd':
+		case 'D':
 			dst_addr = inet_addr(optarg);
 			break;
-		case 't':
+		case 'T':
 			ttl = atoi(optarg);
 			break;
-		case 'T':
+		case 't':
 			icmp_type = atoi(optarg);
 			break;
 		case 'C':

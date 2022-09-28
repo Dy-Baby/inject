@@ -61,9 +61,9 @@ static void ip_usage()
 \t-h : this help message\n");
 
 	printf("\n IP options :\n\n\
-\t-s [address] : source address\n\
-\t-d [address] : destination address\n\
-\t-t [ttl] : ttl\n\n");
+\t-S [address] : source address\n\
+\t-D [address] : destination address\n\
+\t-T [ttl] : ttl\n\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -73,7 +73,7 @@ static void parser(int argc, char *argv[])
 
 	if (argc < 3) ip_usage();
 
-	while ((opt = getopt(argc, argv, "c:vhs:d:t:")) != -1) {
+	while ((opt = getopt(argc, argv, "c:vhS:D:T:")) != -1) {
 		switch (opt) {
 		case 'c':
 			count = atoi(optarg);
@@ -83,13 +83,13 @@ static void parser(int argc, char *argv[])
 			break;
 		case 'h':
 			ip_usage();
-		case 's':
+		case 'S':
 			src_addr = inet_addr(optarg);
 			break;
-		case 'd':
+		case 'D':
 			dst_addr = inet_addr(optarg);
 			break;
-		case 't':
+		case 'T':
 			ttl = atoi(optarg);
 			break;
 		case '?':
