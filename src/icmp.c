@@ -80,7 +80,7 @@ static void parser(int argc, char *argv[])
 			ttl = atoi(optarg);
 			break;
 		case 'o':
-			service = optarg;
+			service = atoi(optarg);
 			break;
 		case 't':
 			icmp_type = atoi(optarg);

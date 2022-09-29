@@ -74,7 +74,7 @@ static void parser(int argc, char *argv[])
 
 	if (argc < 3) ip_usage();
 
-	while ((opt = getopt(argc, argv, "c:vhS:D:T:o")) != -1) {
+	while ((opt = getopt(argc, argv, "c:vhS:D:T:o:")) != -1) {
 		switch (opt) {
 		case 'c':
 			count = atoi(optarg);
@@ -94,7 +94,7 @@ static void parser(int argc, char *argv[])
 			ttl = atoi(optarg);
 			break;
 		case 'o':
-			service = optarg;
+			service = atoi(optarg);
 			break;
 		case '?':
 			break;
