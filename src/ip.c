@@ -18,12 +18,12 @@
 #include "checksum.h"
 
 static unsigned int src_addr, dst_addr;
-static unsigned char ttl;
+static unsigned char ttl, service = 0;
 static int count = 1, verbose = 0;
 
 void set_ip(char *buffer, size_t payload_size,
-		unsigned int src, unsigned int dst,
-		unsigned char ttl, unsigned char protocol)
+		unsigned int src, unsigned int dst, unsigned char ttl,
+		unsigned char service, unsigned char protocol)
 {
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;
 
@@ -42,7 +42,7 @@ void set_ip(char *buffer, size_t payload_size,
 	iph->length += payload_size;
 
 	iph->ver_ihl = 0x45;
-	iph->service = 0x00;
+	iph->service = service;
 	iph->ident = htons(getpid());
 	iph->frag = 0x00;
 	iph->ttl = (ttl) ? ttl : DEFAULT_TTL;
@@ -63,7 +63,8 @@ static void ip_usage()
 	printf("\n IP options :\n\n\
 \t-S [address] : source address\n\
 \t-D [address] : destination address\n\
-\t-T [ttl] : ttl\n\n");
+\t-T [ttl] : ttl\n\
+\t-o [service] : type of service\n\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -73,7 +74,7 @@ static void parser(int argc, char *argv[])
 
 	if (argc < 3) ip_usage();
 
-	while ((opt = getopt(argc, argv, "c:vhS:D:T:")) != -1) {
+	while ((opt = getopt(argc, argv, "c:vhS:D:T:o")) != -1) {
 		switch (opt) {
 		case 'c':
 			count = atoi(optarg);
@@ -91,6 +92,9 @@ static void parser(int argc, char *argv[])
 			break;
 		case 'T':
 			ttl = atoi(optarg);
+			break;
+		case 'o':
+			service = optarg;
 			break;
 		case '?':
 			break;
@@ -114,7 +118,7 @@ void inject_ip(int argc, char *argv[])
 	sock_dst.sin_family = AF_INET;
 	sock_dst.sin_addr.s_addr = dst_addr;
 
-	set_ip(buffer, 0, src_addr, dst_addr, ttl, 0);
+	set_ip(buffer, 0, src_addr, dst_addr, ttl, service, 0);
 
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;
 	for (ind = 0; ind < count; ind += 1)

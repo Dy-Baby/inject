@@ -18,7 +18,7 @@
 #include "checksum.h"
 
 static unsigned int src_addr, dst_addr;
-static unsigned char ttl, icmp_type, icmp_code;
+static unsigned char ttl, service = 0, icmp_type, icmp_code;
 static int count = 1, verbose = 0;
 
 void set_icmp(char *buffer, unsigned char type,
@@ -45,7 +45,8 @@ static void icmp_usage()
         printf("\n IP options :\n\n\
 \t-S [address] : source address\n\
 \t-D [address] : destination address\n\
-\t-T [ttl] : ttl\n");
+\t-T [ttl] : ttl\n\
+\t-o [service] : type of service\n");
 
 	printf("\n ICMP options :\n\n\
 \t-t [type] : icmp type\n\
@@ -59,7 +60,7 @@ static void parser(int argc, char *argv[])
 
 	if (argc < 3) icmp_usage();
 
-	while ((opt = getopt(argc, argv, "c:vhS:D:T:t:C:")) != -1) {
+	while ((opt = getopt(argc, argv, "c:vhS:D:T:o:t:C:")) != -1) {
 		switch (opt) {
 		case 'c':
 			count = atoi(optarg);
@@ -77,6 +78,9 @@ static void parser(int argc, char *argv[])
 			break;
 		case 'T':
 			ttl = atoi(optarg);
+			break;
+		case 'o':
+			service = optarg;
 			break;
 		case 't':
 			icmp_type = atoi(optarg);
@@ -106,7 +110,7 @@ void inject_icmp(int argc, char *argv[])
 	sock_dst.sin_family = AF_INET;
 	sock_dst.sin_addr.s_addr = dst_addr;
 
-	set_ip(buffer, 0, src_addr, dst_addr, ttl, IPPROTO_ICMP);
+	set_ip(buffer, 0, src_addr, dst_addr, ttl, service, IPPROTO_ICMP);
 	set_icmp(buffer, icmp_type, icmp_code, 0);
 
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;

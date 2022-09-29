@@ -21,7 +21,7 @@
 #include "checksum.h"
 
 static unsigned int src_addr, dst_addr;
-static unsigned char ttl, tcp_flag;
+static unsigned char ttl, service = 0, tcp_flag;
 static unsigned short src_port, dst_port;
 static int count = 1, verbose = 0;
 static char *file_name = NULL;
@@ -87,7 +87,8 @@ static void tcp_usage()
         printf("\n IP options :\n\n\
 \t-S [address] : source address\n\
 \t-D [address] : destination address\n\
-\t-T [ttl] : ttl\n");
+\t-T [ttl] : ttl\n\
+\t-o [service] : type of service\n");
 
 	printf("\n TCP options :\n\n\
 \t-s [port] : source port\n\
@@ -113,7 +114,7 @@ static void parser(int argc, char *argv[])
 
         if (argc < 3) tcp_usage();
 
-        while ((opt = getopt(argc, argv, "c:vhS:D:T:s:d:f:a:")) != -1) {
+        while ((opt = getopt(argc, argv, "c:vhS:D:T:o:s:d:f:a:")) != -1) {
                 switch (opt) {
                 case 'c':
                         count = atoi(optarg);
@@ -132,6 +133,9 @@ static void parser(int argc, char *argv[])
                 case 'T':
                         ttl = atoi(optarg);
                         break;
+		case 'o':
+			service = optarg;
+			break;
                 case 's':
                         src_port = atoi(optarg);
                         break;
@@ -175,7 +179,7 @@ void inject_tcp(int argc, char *argv[])
 	       payload_size = strlen(payload);
        }
 
-       set_ip(buffer, payload_size, src_addr, dst_addr, ttl, IPPROTO_TCP);
+       set_ip(buffer, payload_size, src_addr, dst_addr, ttl, service, IPPROTO_TCP);
        set_tcp(buffer, payload, payload_size, src_port, dst_port, tcp_flag, 1, 1);
 
        struct ip_hdr *iph = (struct ip_hdr *)buffer;
