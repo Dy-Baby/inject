@@ -45,6 +45,7 @@ void print_ip(char *buffer)
 
 	printf("IP source : %s\n", inet_ntoa(src.sin_addr));
 	printf("IP destination : %s\n", inet_ntoa(dst.sin_addr));
+	printf("IP tos : %d\n", iph->service);
 	printf("IP ttl : %d\n", iph->ttl);
 	printf("IP id : %d\n", iph->ident);
 	printf("IP check : %x\n", iph->check);
