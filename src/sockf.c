@@ -25,6 +25,18 @@ int init_socket()
 	return sockfd;
 }
 
+int bind_iface(int sockfd, char *iface)
+{
+	int len = strlen(iface);
+
+	if (setsockopt(sockfd, SOL_SOCKET, SO_BINDTODEVICE, iface, len) == -1) {
+		err_msg("sockf.c", "bind_iface", __LINE__, errno);
+		return errno;
+	}
+
+	return 0;
+}
+
 void close_sock(int sockfd)
 {
 	if (close(sockfd) == -1)

@@ -24,7 +24,7 @@ static unsigned int src_addr, dst_addr;
 static unsigned char ttl, service = 0;
 static unsigned short src_port, dst_port;
 static int count = 1, verbose = 0;
-static char *file_name = NULL;
+static char *file_name = NULL, *iface = NULL;
 
 static unsigned short udp_check(struct ip_hdr *iph, struct udp_hdr *udph,
 				char *payload, size_t payload_size)
@@ -74,6 +74,7 @@ void set_udp(char *buffer, char *payload, size_t payload_size,
 static void udp_usage()
 {
         printf("\n general options :\n\n\
+\t-i [interface] : network interface\n\
 \t-c [count] : number of packets to send\n\
 \t-v : verbose\n\
 \t-h : this help message\n");
@@ -97,8 +98,11 @@ static void parser(int argc, char *argv[])
 
         if (argc < 3) udp_usage();
 
-        while ((opt = getopt(argc, argv, "c:vhS:D:T:o:s:d:a:")) != -1) {
+        while ((opt = getopt(argc, argv, "i:c:vhS:D:T:o:s:d:a:")) != -1) {
                 switch (opt) {
+		case 'i':
+			iface = optarg;
+			break;
                 case 'c':
                         count = atoi(optarg);
                         break;
@@ -149,6 +153,8 @@ void inject_udp(int argc, char *argv[])
        memset(&sock_dst, 0, sizeof(struct sockaddr_in));
 
        sockfd = init_socket();
+       if (iface) bind_iface(sockfd, iface);
+
        sock_dst.sin_family = AF_INET;
        sock_dst.sin_addr.s_addr = dst_addr;
        sock_dst.sin_port = dst_port;

@@ -20,6 +20,7 @@
 static unsigned int src_addr, dst_addr;
 static unsigned char ttl, service = 0;
 static int count = 1, verbose = 0;
+static char *iface = NULL;
 
 void set_ip(char *buffer, size_t payload_size,
 		unsigned int src, unsigned int dst, unsigned char ttl,
@@ -56,6 +57,7 @@ void set_ip(char *buffer, size_t payload_size,
 static void ip_usage()
 {
 	printf("\n general options :\n\n\
+\t-i [interface] : network interface\n\
 \t-c [count] : number of packets to send\n\
 \t-v : verbose\n\
 \t-h : this help message\n");
@@ -74,8 +76,11 @@ static void parser(int argc, char *argv[])
 
 	if (argc < 3) ip_usage();
 
-	while ((opt = getopt(argc, argv, "c:vhS:D:T:o:")) != -1) {
+	while ((opt = getopt(argc, argv, "i:c:vhS:D:T:o:")) != -1) {
 		switch (opt) {
+		case 'i':
+			iface = optarg;
+			break;
 		case 'c':
 			count = atoi(optarg);
 			break;
@@ -115,6 +120,8 @@ void inject_ip(int argc, char *argv[])
 	memset(&sock_dst, 0, sizeof(struct sockaddr_in));
 
 	sockfd = init_socket();
+	if (iface) bind_iface(sockfd, iface);
+
 	sock_dst.sin_family = AF_INET;
 	sock_dst.sin_addr.s_addr = dst_addr;
 
