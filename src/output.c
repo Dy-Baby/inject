@@ -43,12 +43,12 @@ void print_ip(char *buffer)
 	src.sin_addr.s_addr = iph->src;
 	dst.sin_addr.s_addr = iph->dst;
 
-	printf("IP source : %s\n", inet_ntoa(src.sin_addr));
-	printf("IP destination : %s\n", inet_ntoa(dst.sin_addr));
-	printf("IP tos : %d\n", iph->service);
-	printf("IP ttl : %d\n", iph->ttl);
-	printf("IP id : %d\n", iph->ident);
-	printf("IP check : %x\n", iph->check);
+	printf("IP source       : %s\n", inet_ntoa(src.sin_addr));
+	printf("IP destination  : %s\n", inet_ntoa(dst.sin_addr));
+	printf("IP tos          : %d\n", iph->service);
+	printf("IP ttl          : %d\n", iph->ttl);
+	printf("IP id           : %d\n", iph->ident);
+	printf("IP check        : %x\n", iph->check);
 }
 
 void print_icmp(char *buffer)
@@ -59,11 +59,11 @@ void print_icmp(char *buffer)
 	memset(type_str, 0, 50);
 	get_icmp_type(icmph->type, type_str);
 
-	printf("ICMP type : %s\n", type_str);
-	printf("ICMP code : %d\n", icmph->code);
-	printf("ICMP id : %d\n", icmph->id);
-	printf("ICMP seq : %d\n", icmph->seq);
-	printf("ICMP check : %x\n", icmph->check);
+	printf("ICMP type       : %s\n", type_str);
+	printf("ICMP code       : %d\n", icmph->code);
+	printf("ICMP id         : %d\n", icmph->id);
+	printf("ICMP seq        : %d\n", icmph->seq);
+	printf("ICMP check      : %x\n", icmph->check);
 }
 
 void print_tcp(char *buffer)
@@ -74,19 +74,19 @@ void print_tcp(char *buffer)
 	memset(flag_str, 0, 32);
 	get_tcp_flag(tcph->flag, flag_str);
 
-	printf("TCP source : %d\n", htons(tcph->src));
+	printf("TCP source      : %d\n", htons(tcph->src));
 	printf("TCP destination : %d\n", htons(tcph->dst));
-	printf("TCP seq : %d\n", tcph->seq);
-	printf("TCP ack : %d\n", tcph->ack);
-	printf("TCP flag : %s\n", flag_str);
-	printf("TCP check : %x\n", tcph->check);
+	printf("TCP seq         : %d\n", tcph->seq);
+	printf("TCP ack         : %d\n", tcph->ack);
+	printf("TCP flag        : %s\n", flag_str);
+	printf("TCP check       : %x\n", tcph->check);
 }
 
 void print_udp(char *buffer)
 {
 	struct udp_hdr *udph = (struct udp_hdr *)(buffer + sizeof(struct ip_hdr));
 
-	printf("UDP source : %d\n", htons(udph->src));
+	printf("UDP source      : %d\n", htons(udph->src));
 	printf("UDP destination : %d\n", htons(udph->dst));
-	printf("UDP checksum : %x\n", udph->check);
+	printf("UDP checksum    : %x\n", udph->check);
 }
