@@ -12,7 +12,7 @@ int send_data(int sockfd, char *buffer, size_t len, struct sockaddr_in *dst)
 	if (sendto(sockfd, buffer, len, 0, (struct sockaddr *)dst,
 		   sizeof(*dst)) < 0) {
 		err_msg("send.c", "send_data", __LINE__, errno);
-		return errno;
+		return -1;
 	}
 
 	return 0;

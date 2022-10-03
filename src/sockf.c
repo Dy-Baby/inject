@@ -15,11 +15,11 @@ int init_socket()
 
 	if ((sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_RAW)) < 0) {
 		err_msg("sockf.c", "init_socket", __LINE__, errno);
-		return errno;
+		return -1;
 	}
 	if (setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &enable, sizeof(int)) < 0) {
 		err_msg("sockf.c", "init_socket", __LINE__, errno);
-		return errno;
+		return -1;
 	}
 
 	return sockfd;
@@ -31,7 +31,7 @@ int bind_iface(int sockfd, char *iface)
 
 	if (setsockopt(sockfd, SOL_SOCKET, SO_BINDTODEVICE, iface, len) == -1) {
 		err_msg("sockf.c", "bind_iface", __LINE__, errno);
-		return errno;
+		return -1;
 	}
 
 	return 0;
