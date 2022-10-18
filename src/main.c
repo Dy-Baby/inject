@@ -29,17 +29,17 @@ void parser(int argc, char *argv[])
 
 	if (argc < 2) print_usage();
 
-	if (!strcmp(argv[1], "ip")) inject_ip(argc, argv);
-	if (!strcmp(argv[1], "icmp")) inject_icmp(argc, argv);
-	if (!strcmp(argv[1], "tcp")) inject_tcp(argc, argv);
-	if (!strcmp(argv[1], "udp")) inject_udp(argc, argv);
-
 	while ((opt = getopt(argc, argv, "h")) != -1) {
 		switch (opt) {
 		case 'h':
 			print_usage();
 		}
 	}
+
+	if (!strcmp(argv[1], "ip")) inject_ip(argc, argv);
+	if (!strcmp(argv[1], "icmp")) inject_icmp(argc, argv);
+	if (!strcmp(argv[1], "tcp")) inject_tcp(argc, argv);
+	if (!strcmp(argv[1], "udp")) inject_udp(argc, argv);
 }
 
 int main(int argc, char *argv[])
