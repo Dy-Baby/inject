@@ -54,22 +54,18 @@ void print_icmp(char *buffer)
 void print_tcp(char *buffer)
 {
 	struct tcp_hdr *tcph = (struct tcp_hdr *)(buffer + sizeof(struct ip_hdr));
-	char flag_str[32];
-
-	memset(flag_str, 0, 32);
-	get_tcp_flag(tcph->flag, flag_str);
 
 	printf("TCP source      : %d\n", htons(tcph->src));
 	printf("TCP destination : %d\n", htons(tcph->dst));
 	printf("TCP seq         : %d\n", tcph->seq);
 	printf("TCP ack         : %d\n", tcph->ack);
 	printf("TCP flag        : ");
-	if ((flag | 1) == flag) printf("fin,");
-	if ((flag | 2) == flag) printf("syn,");
-	if ((flag | 4) == flag) printf("rst,");
-	if ((flag | 8) == flag) printf("psh,");
-	if ((flag | 16) == flag) printf("ack,");
-	if ((flag | 32) == flag) printf("urg,");
+	if ((tcph->flag | 1) == tcph->flag) printf("fin,");
+	if ((tcph->flag | 2) == tcph->flag) printf("syn,");
+	if ((tcph->flag | 4) == tcph->flag) printf("rst,");
+	if ((tcph->flag | 8) == tcph->flag) printf("psh,");
+	if ((tcph->flag | 16) == tcph->flag) printf("ack,");
+	if ((tcph->flag | 32) == tcph->flag) printf("urg,");
 	printf("\n");
 	printf("TCP check       : %x\n", tcph->check);
 }
