@@ -8,16 +8,6 @@
 #include "output.h"
 #include "type.h"
 
-static void get_tcp_flag(unsigned char flag, char *flag_str)
-{
-	if ((flag | 1) == flag) strcat(flag_str, "fin,");
-        if ((flag | 2) == flag) strcat(flag_str, "syn,");
-        if ((flag | 4) == flag) strcat(flag_str, "rst,");
-        if ((flag | 8) == flag) strcat(flag_str, "psh,");
-        if ((flag | 16) == flag) strcat(flag_str, "ack,");
-        if ((flag | 32) == flag) strcat(flag_str, "urg,");
-}
-
 void print_ip(char *buffer)
 {
 	struct sockaddr_in src, dst;
@@ -73,7 +63,14 @@ void print_tcp(char *buffer)
 	printf("TCP destination : %d\n", htons(tcph->dst));
 	printf("TCP seq         : %d\n", tcph->seq);
 	printf("TCP ack         : %d\n", tcph->ack);
-	printf("TCP flag        : %s\n", flag_str);
+	printf("TCP flag        : ");
+	if ((flag | 1) == flag) printf("fin,");
+	if ((flag | 2) == flag) printf("syn,");
+	if ((flag | 4) == flag) printf("rst,");
+	if ((flag | 8) == flag) printf("psh,");
+	if ((flag | 16) == flag) printf("ack,");
+	if ((flag | 32) == flag) printf("urg,");
+	printf("\n");
 	printf("TCP check       : %x\n", tcph->check);
 }
 
