@@ -8,23 +8,6 @@
 #include "output.h"
 #include "type.h"
 
-static void get_icmp_type(unsigned char type, char *type_str)
-{
-	if (type == 0) strcpy(type_str, "echo reply");
-	if (type == 3) strcpy(type_str, "destination unreachable");
-	if (type == 4) strcpy(type_str, "source quench");
-	if (type == 5) strcpy(type_str, "redirect");
-	if (type == 8) strcpy(type_str, "echo request");
-	if (type == 11) strcpy(type_str, "time exceeded");
-	if (type == 12) strcpy(type_str, "parameter unintelligible");
-	if (type == 13) strcpy(type_str, "time-stamp request");
-	if (type == 14) strcpy(type_str, "time-stamp reply");
-	if (type == 15) strcpy(type_str, "information request");
-	if (type == 16) strcpy(type_str, "information reply");
-	if (type == 17) strcpy(type_str, "address mask request");
-	if (type == 18) strcpy(type_str, "address mask reply");
-}
-
 static void get_tcp_flag(unsigned char flag, char *flag_str)
 {
 	if ((flag | 1) == flag) strcat(flag_str, "fin,");
@@ -54,12 +37,24 @@ void print_ip(char *buffer)
 void print_icmp(char *buffer)
 {
 	struct icmp_hdr *icmph = (struct icmp_hdr *)(buffer + sizeof(struct ip_hdr));
-	char type_str[50];
 
-	memset(type_str, 0, 50);
-	get_icmp_type(icmph->type, type_str);
-
-	printf("ICMP type       : %s\n", type_str);
+	printf("ICMP type       : ");
+	if (icmph->type == 0) printf("echo reply\n");
+	if (icmph->type == 3) printf("destination unreachable\n");
+	if (icmph->type == 4) printf("source quench\n");
+	if (icmph->type == 5) printf("redirect");
+	if (icmph->type == 8) printf("echo request\n");
+	if (icmph->type == 9) printf("router advertisement\n");
+	if (icmph->type == 10) printf("router selection\n");
+	if (icmph->type == 11) printf("time exceeded\n");
+	if (icmph->type == 12) printf("parameter problem\n");
+	if (icmph->type == 13) printf("timestamp\n");
+	if (icmph->type == 14) printf("timestamp reply\n");
+	if (icmph->type == 15) printf("information request\n");
+	if (icmph->type == 16) printf("information reply\n");
+	if (icmph->type == 17) printf("address mask request\n");
+	if (icmph->type == 18) printf("address mask reply\n");
+	if (icmph->type == 30) printf("traceroute\n");	
 	printf("ICMP code       : %d\n", icmph->code);
 	printf("ICMP id         : %d\n", icmph->id);
 	printf("ICMP seq        : %d\n", icmph->seq);
