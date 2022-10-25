@@ -99,16 +99,6 @@ static void tcp_usage()
 	exit(EXIT_FAILURE);
 }
 
-static void parse_tcp_flag(char *option)
-{
-        if (!strcmp(optarg, "fin")) tcp_flag |= 1;
-        if (!strcmp(optarg, "syn")) tcp_flag |= 2;
-        if (!strcmp(optarg, "rst")) tcp_flag |= 4;
-        if (!strcmp(optarg, "psh")) tcp_flag |= 8;
-        if (!strcmp(optarg, "ack")) tcp_flag |= 16;
-        if (!strcmp(optarg, "urg")) tcp_flag |= 32;
-}
-
 static void parser(int argc, char *argv[])
 {
         int opt;
@@ -147,7 +137,12 @@ static void parser(int argc, char *argv[])
                         dst_port = atoi(optarg);
                         break;
 		case 'f':
-			parse_tcp_flag(optarg);
+			if (!strcmp(optarg, "fin")) tcp_flag |= 1;
+			if (!strcmp(optarg, "syn")) tcp_flag |= 2;
+			if (!strcmp(optarg, "rst")) tcp_flag |= 4;
+			if (!strcmp(optarg, "psh")) tcp_flag |= 8;
+			if (!strcmp(optarg, "ack")) tcp_flag |= 16;
+			if (!strcmp(optarg, "urg")) tcp_flag |= 32;
 			break;
 		case 'a':
 			file_name = optarg;
