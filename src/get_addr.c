@@ -1,11 +1,17 @@
 #define _GNU_SOURCE
+
+#include <stdio.h>
 #include <string.h>
-#include <netinet/in.h>
+#include <errno.h>
+
+#include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netdb.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include <ifaddrs.h>
-#include <errno.h>
+
 #include "error_func.h"
 #include "get_addr.h"
 
@@ -35,4 +41,25 @@ unsigned int get_address()
 	freeifaddrs(addr);
 
 	return ip;
+}
+
+int list_interfaces()
+{
+	struct ifaddrs *addr, *temp;
+
+	if (getifaddrs(&addr) == -1) {
+		err_msg("get_addr.c", "list_interfaces", __LINE__, errno);
+		return -1;
+	}
+
+	for (temp = addr; temp != NULL; temp = temp->ifa_next) {
+		if (temp->ifa_addr == NULL) continue;
+
+		if (temp->ifa_addr->sa_family == AF_INET)
+			printf("%s\n", temp->ifa_name);
+	}
+
+	freeifaddrs(addr);
+
+	return 0;
 }

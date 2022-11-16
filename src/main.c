@@ -9,6 +9,7 @@
 #include "icmp.h"
 #include "tcp.h"
 #include "udp.h"
+#include "get_addr.h"
 
 void print_usage()
 {
@@ -19,6 +20,7 @@ void print_usage()
 \ttcp : tcp packets\n\
 \tudp : udp packets\n\n\
  options :\n\
+\t-g : list avaliable interfaces\n\
 \t-h : this help message\n\n");
 	exit(EXIT_FAILURE);
 }
@@ -34,8 +36,11 @@ void parser(int argc, char *argv[])
 	if (!strcmp(argv[1], "tcp")) inject_tcp(argc, argv);
 	if (!strcmp(argv[1], "udp")) inject_udp(argc, argv);
 
-	while ((opt = getopt(argc, argv, "h")) != -1) {
+	while ((opt = getopt(argc, argv, "gh")) != -1) {
 		switch (opt) {
+		case 'g':
+			list_interfaces();
+			break;
 		case 'h':
 			print_usage();
 		}
