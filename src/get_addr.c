@@ -46,6 +46,8 @@ unsigned int get_address()
 int list_interfaces()
 {
 	struct ifaddrs *addr, *temp;
+	struct sockaddr_in *ip_addr;
+	int ind = 0;
 
 	if (getifaddrs(&addr) == -1) {
 		err_msg("get_addr.c", "list_interfaces", __LINE__, errno);
@@ -55,8 +57,12 @@ int list_interfaces()
 	for (temp = addr; temp != NULL; temp = temp->ifa_next) {
 		if (temp->ifa_addr == NULL) continue;
 
+		ip_addr = (struct sockaddr_in *)temp->ifa_addr;
+
 		if (temp->ifa_addr->sa_family == AF_INET)
-			printf("%s\n", temp->ifa_name);
+			printf("[%d] [%s] -> [%s]\n", ind, temp->ifa_name,
+				inet_ntoa(ip_addr->sin_addr));
+		ind += 1;
 	}
 
 	freeifaddrs(addr);
