@@ -23,10 +23,10 @@
 #include "type.h"
 #include "arp.h"
 
-static unsigned char *src_mac = NULL, dst_mac[6];
+static unsigned char src_mac[6], dst_mac[6];
 static unsigned char *src_ip = NULL, *dst_ip = NULL;
 static unsigned short oper;
-static int count = 1, verbose = 0;
+static int count = 1, verbose = 0, src_mac_control = 0, dst_mac_control = 0;
 static char *iface = NULL;
 
 void set_arp(char *buffer, unsigned char *source_mac, unsigned char *source_ip,
@@ -58,8 +58,10 @@ static void arp_usage()
 \t-h : this help message\n");
 
 	printf("\n ARP options : \n\n\
-\t-S [address] : source address\n\
-\t-D [address] : destination address\n\
+\t-M [mac address] : source mac address (in XX:XX:XX:XX:XX:XX format)\n\
+\t-K [mac address] : destination mac address (in XX:XX:XX:XX:XX:XX format)\n\
+\t-S [ip address] : source ip address\n\
+\t-D [ip address] : destination ip address\n\
 \t-r [operation] : ARP operation\n\n");
 	exit(EXIT_FAILURE);
 }
@@ -70,7 +72,7 @@ static void parser(int argc, char *argv[])
 
 	if (argc < 3) arp_usage();
 
-	while ((opt = getopt(argc, argv, "i:c:vhS:D:r:")) != -1) {
+	while ((opt = getopt(argc, argv, "i:c:vhM:K:S:D:r:")) != -1) {
 		switch (opt) {
 		case 'i':
 			iface = optarg;
@@ -83,6 +85,18 @@ static void parser(int argc, char *argv[])
 			break;
 		case 'h':
 			arp_usage();
+		case 'M':
+			sscanf(optarg, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
+				&src_mac[0], &src_mac[1], &src_mac[2],
+				&src_mac[3], &src_mac[4], &src_mac[5]);
+			src_mac_control = 1;
+			break;
+		case 'K':
+			sscanf(optarg, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
+				&dst_mac[0], &dst_mac[1], &dst_mac[2],
+				&dst_mac[3], &dst_mac[4], &dst_mac[5]);
+			dst_mac_control = 1;
+			break;
 		case 'S':
 			src_ip = (unsigned char *)optarg;
 			break;
@@ -116,11 +130,15 @@ void inject_arp(int argc, char *argv[])
 	if (!dst_ip) err_exit("destination address not specified.");
 	if (!iface) err_exit("network interface not specified.");
 
-	memcpy(ifr.ifr_name, iface, strlen(iface));
-	if (ioctl(sockfd, SIOCGIFHWADDR, &ifr) == -1)
-		err_msg("arp.c", "get_iface_mac", __LINE__, errno);
-	src_mac = (unsigned char *)(ifr.ifr_hwaddr.sa_data);
-	memset(dst_mac, 0xff, 6);
+	if (src_mac_control == 0) {
+		memcpy(ifr.ifr_name, iface, strlen(iface));
+		if (ioctl(sockfd, SIOCGIFHWADDR, &ifr) == -1)
+			err_msg("arp.c", "get_iface_mac", __LINE__, errno);
+		
+		memcpy(src_mac, ifr.ifr_hwaddr.sa_data, 6);
+	}
+
+	if (dst_mac_control == 0) memset(dst_mac, 0xff, 6);
 
 	if ((device.sll_ifindex = if_nametoindex(iface)) == 0)
 		err_msg("arp.c", "inject_arp", __LINE__, errno);
