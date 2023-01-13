@@ -4,6 +4,7 @@ Inject
 Inject is a raw socket packet crafter and injector.
 
 ### Supported Protocols
+- ARP
 - IP
 - ICMP
 - TCP
