@@ -8,6 +8,48 @@
 #include "output.h"
 #include "type.h"
 
+void print_eth(char *buffer)
+{
+	struct eth_hdr *eth = (struct eth_hdr *)buffer;
+	int ind;
+
+	printf("ETH source      : ");
+	for (ind = 0; ind < 5; ind += 1)
+		printf("%.2x:", eth->src[ind]);
+	printf("%.2x\n", eth->src[5]);
+
+        printf("ETH destination : ");
+        for (ind = 0; ind < 5; ind += 1)
+                printf("%.2x:", eth->dst[ind]);
+        printf("%.2x\n", eth->dst[5]);
+
+	printf("ETH protocol    : %d\n", eth->protocol);
+
+}
+
+void print_arp(char *buffer)
+{
+	struct arp_hdr *arph = (struct arp_hdr * )(buffer + sizeof(struct eth_hdr));
+	int ind;
+
+	printf("ARP source mac  : ");
+	for (ind = 0; ind < 5; ind += 1)
+		printf("%.2x:", arph->src_mac[ind]);
+	printf("%.2x\n", arph->src_mac[5]);
+
+	printf("ARP target mac  : ");
+	for (ind = 0; ind < 5; ind += 1)
+		printf("%.2x:", arph->dst_mac[ind]);
+	printf("%.2x\n", arph->dst_mac[5]);
+
+	/*
+	printf("ARP source ip   : %s\n", inet_ntoa(src.sin_addr));
+	printf("ARP target ip   : %s\n", inet_ntoa(dst.sin_addr));
+	*/
+
+	printf("ARP operation   : %d\n", arph->oper);
+}
+
 void print_ip(char *buffer)
 {
 	struct sockaddr_in src, dst;

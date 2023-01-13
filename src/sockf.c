@@ -3,9 +3,12 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
+#include <linux/if_ether.h>
+
 #include "sockf.h"
 #include "error_func.h"
 
@@ -19,6 +22,18 @@ int init_socket()
 	}
 	if (setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &enable, sizeof(int)) < 0) {
 		err_msg("sockf.c", "init_socket", __LINE__, errno);
+		return -1;
+	}
+
+	return sockfd;
+}
+
+int init_packet_socket()
+{
+	int sockfd;
+
+	if ((sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) < 0) {
+		err_msg("sockf.c", "init_raw_socket", __LINE__, errno);
 		return -1;
 	}
 
