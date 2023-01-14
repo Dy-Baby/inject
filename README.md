@@ -49,7 +49,3 @@ Inject is a raw socket packet crafter and injector.
 > send udp packet with a payload using file
 * UDP packet with data :
      `./inject udp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 4000 -a (file)`
-
-### Contrubition
-If you want to contribute to the project, fork it, work on it and than make a PR
-
