@@ -3,13 +3,13 @@ Inject
 
 Inject is a raw socket packet crafter and injector.
 
-### Supported Protocols
-- ETH
-- ARP
-- IP
-- ICMP
-- TCP
-- UDP
+### Supported Protocols and Features
+- ETH (MAC Addresses, Protocol, Payload)
+- ARP (MAC Addresses, IP Addresses, ARP operation)
+- IP (IP Adresses, TTL, Service)
+- ICMP (Type, Code)
+- TCP (Ports, Flag, Payload)
+- UDP (Ports, Payload)
 
 ### Installation
 * For installation, go to the project directory and compile with : 
@@ -20,6 +20,8 @@ Inject is a raw socket packet crafter and injector.
 ### Example Usages
 * ETH packet :
     `./inject eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa`
+> send eth packet with a payload using file
+	`./inject eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa -a (file)`
 
 * ARP packet :
     `./inject arp -i wlan0 -S 192.168.1.50 -D 192.168.1.1 -r 1`
@@ -33,17 +35,21 @@ Inject is a raw socket packet crafter and injector.
 * TCP syn packet :
      `./inject tcp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 80 -f syn`
 
-> you can use multiple flags together.
-* TCP syn, ack packet
+> you can use multiple flags together
+* TCP syn, ack packet :
      `./inject tcp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 80 -f syn -f ack`
 
-> send tcp packet with a payload using files
-* TCP psh packet with data
+> send tcp packet with a payload using file
+* TCP psh packet with data :
      `./inject tcp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 80 -f psh -a (file)`
 
-* UDP packet
+* UDP packet :
      `./inject udp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 4000`
 
-> send udp packet with a payload using files
-* UDP packet with data
+> send udp packet with a payload using file
+* UDP packet with data :
      `./inject udp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 4000 -a (file)`
+
+### Contrubition
+If you want to contribute to the project, fork it, work on it and than make a PR
+
