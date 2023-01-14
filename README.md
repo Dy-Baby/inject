@@ -1,7 +1,7 @@
-Inject
+KORMOS
 ---
 
-Inject is a raw socket packet crafter and injector.
+Kormos is a raw socket packet crafter and injector.
 
 ### Supported Protocols and Features
 - ETH (MAC Addresses, Protocol, Payload)

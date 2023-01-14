@@ -123,7 +123,8 @@ void inject_arp(int argc, char *argv[])
 
 	sockfd = init_packet_socket();
 
-	if (!dst_ip) err_exit("destination address not specified.");
+	if (!src_ip) err_exit("source ip address not specified.");
+	if (!dst_ip) err_exit("destination ip address not specified.");
 	if (!iface) err_exit("network interface not specified.");
 
 	if (src_mac_control == 0) {
