@@ -4,6 +4,7 @@ Inject
 Inject is a raw socket packet crafter and injector.
 
 ### Supported Protocols
+- ETH
 - ARP
 - IP
 - ICMP
@@ -17,6 +18,9 @@ Inject is a raw socket packet crafter and injector.
     `make clean`
 
 ### Example Usages
+* ETH packet :
+    `./inject eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa`
+
 * ARP packet :
     `./inject arp -i wlan0 -S 192.168.1.50 -D 192.168.1.1 -r 1`
 
