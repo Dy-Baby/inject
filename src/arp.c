@@ -142,7 +142,7 @@ void inject_arp(int argc, char *argv[])
 	memcpy(device.sll_addr, src_mac, 6);
 	device.sll_halen = 6;
 
-	set_eth(buffer, dst_mac, src_mac, ETH_P_ARP);
+	set_eth(buffer, dst_mac, src_mac, ETH_P_ARP, NULL, 0);
 	set_arp(buffer, src_mac, src_ip, dst_mac, dst_ip, oper);
 
 	len = sizeof(struct eth_hdr) + sizeof(struct arp_hdr);

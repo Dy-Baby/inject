@@ -18,6 +18,7 @@
 #include "sockf.h"
 #include "get_addr.h"
 #include "send.h"
+#include "data.h"
 #include "error_func.h"
 #include "output.h"
 #include "type.h"
@@ -26,12 +27,15 @@
 static unsigned char src_mac[6], dst_mac[6];
 static unsigned short protocol;
 static int count = 1, verbose = 0, src_mac_control = 0, dst_mac_control = 0;
-static char *iface = NULL;
+static char *file_name = NULL, *iface = NULL;
 
-void set_eth(char *buffer, unsigned char *dst, unsigned char *src, unsigned short proto)
+void set_eth(char *buffer, unsigned char *dst, unsigned char *src,
+		unsigned short proto, char *payload, size_t payload_size)
 {
 	struct eth_hdr *ethh = (struct eth_hdr *)buffer;
+	char *ptr = (buffer + sizeof(struct eth_hdr));
 
+	strncat(ptr, payload, payload_size);
 	memcpy(ethh->dst, dst, 6);
 	memcpy(ethh->src, src, 6);
 	ethh->protocol = htons(proto);
@@ -48,7 +52,8 @@ static void eth_usage()
 	printf("\n ETH options :\n\n\
 \t-M [mac address] : source mac address (in XX:XX:XX:XX:XX:XX format)\n\
 \t-K [mac address] : destination mac address (in XX:XX:XX:XX:XX:XX format)\n\
-\t-p [protocol] : protocol\n\n");
+\t-p [protocol] : protocol\n\
+\t-a [file name] : payload file\n\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -58,7 +63,7 @@ static void parser(int argc, char *argv[])
 
 	if (argc < 3) eth_usage();
 
-	while ((opt = getopt(argc, argv, "i:c:vhM:K:p:")) != -1) {
+	while ((opt = getopt(argc, argv, "i:c:vhM:K:p:a:")) != -1) {
 		switch (opt) {
 		case 'i':
 			iface = optarg;
@@ -87,6 +92,9 @@ static void parser(int argc, char *argv[])
 		case 'p':
 			protocol = atoi(optarg);
 			break;
+		case 'a':
+			file_name = optarg;
+			break;
 		case '?':
 			break;
 		}
@@ -95,10 +103,11 @@ static void parser(int argc, char *argv[])
 
 void inject_eth(int argc, char *argv[])
 {
-	char buffer[BUFF_SIZE];
+	char buffer[BUFF_SIZE], *payload;
 	struct ifreq ifr;
 	struct sockaddr_ll device;
-	int sockfd, ind;
+	int sockfd, ind, len;
+	size_t payload_size = 0;
 
 	parser(argc, argv);
 
@@ -126,10 +135,17 @@ void inject_eth(int argc, char *argv[])
 	memcpy(device.sll_addr, src_mac, 6);
 	device.sll_halen = 6;
 
-	set_eth(buffer, dst_mac, src_mac, protocol);
+	if (file_name) {
+		if ((payload = read_file(file_name)) == NULL)
+			exit(EXIT_FAILURE);
+		payload_size = strlen(payload);
+	}
 
+	set_eth(buffer, dst_mac, src_mac, protocol, payload, payload_size);
+
+	len = sizeof(struct eth_hdr) + payload_size;
 	for (ind = 0; ind < count; ind += 1)
-		send_packet_data(sockfd, buffer, sizeof(struct eth_hdr), &device);
+		send_packet_data(sockfd, buffer, len, &device);
 
 	if (verbose)
 		print_eth(buffer);
