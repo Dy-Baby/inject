@@ -42,10 +42,10 @@ void print_arp(char *buffer)
 		printf("%.2x:", arph->dst_mac[ind]);
 	printf("%.2x\n", arph->dst_mac[5]);
 
-	/*
-	printf("ARP source ip   : %s\n", inet_ntoa(src.sin_addr));
-	printf("ARP target ip   : %s\n", inet_ntoa(dst.sin_addr));
-	*/
+	printf("ARP source ip   : %u.%u.%u.%u\n",
+		arph->src_ip[0], arph->src_ip[1], arph->src_ip[2], arph->src_ip[3]);
+	printf("ARP target ip   : %u.%u.%u.%u\n",
+		arph->dst_ip[0] ,arph->dst_ip[1], arph->dst_ip[2], arph->dst_ip[3]);
 
 	printf("ARP operation   : %d\n", arph->oper);
 }
