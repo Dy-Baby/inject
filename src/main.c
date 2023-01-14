@@ -5,6 +5,7 @@
 #include <sys/types.h>
 
 #include "error_func.h"
+#include "eth.h"
 #include "arp.h"
 #include "ip.h"
 #include "icmp.h"
@@ -16,6 +17,7 @@ void print_usage()
 {
 	printf("\n usage : ./inject [protocol] [options]\n\n\
  protocol :\n\
+\teth : eth packets\n\
 \tarp : arp packets\n\
 \tip : ip packets\n\
 \ticmp : icmp packets\n\
@@ -33,6 +35,7 @@ void parser(int argc, char *argv[])
 
 	if (argc < 2) print_usage();
 
+	if (!strcmp(argv[1], "eth")) inject_eth(argc, argv);
 	if (!strcmp(argv[1], "arp")) inject_arp(argc, argv);
 	if (!strcmp(argv[1], "ip")) inject_ip(argc, argv);
 	if (!strcmp(argv[1], "icmp")) inject_icmp(argc, argv);

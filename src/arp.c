@@ -21,6 +21,7 @@
 #include "error_func.h"
 #include "output.h"
 #include "type.h"
+#include "eth.h"
 #include "arp.h"
 
 static unsigned char src_mac[6], dst_mac[6];
@@ -31,12 +32,7 @@ static char *iface = NULL;
 
 void set_arp(char *buffer, unsigned char *source_mac, unsigned char *source_ip,
 		unsigned char *target_mac, unsigned char *target_ip, unsigned short oper){
-	struct eth_hdr *ethh = (struct eth_hdr *)(buffer);
 	struct arp_hdr *arph = (struct arp_hdr *)(buffer + sizeof(struct eth_hdr));
-
-	memcpy(ethh->dst, dst_mac, 6);
-	memcpy(ethh->src, src_mac, 6);
-	ethh->protocol = htons(ETH_P_ARP);
 
 	arph->htype = htons(1);
 	arph->ptype = htons(ETH_P_IP);
@@ -57,7 +53,7 @@ static void arp_usage()
 \t-v : verbose\n\
 \t-h : this help message\n");
 
-	printf("\n ARP options : \n\n\
+	printf("\n ARP options :\n\n\
 \t-M [mac address] : source mac address (in XX:XX:XX:XX:XX:XX format)\n\
 \t-K [mac address] : destination mac address (in XX:XX:XX:XX:XX:XX format)\n\
 \t-S [ip address] : source ip address\n\
@@ -133,7 +129,7 @@ void inject_arp(int argc, char *argv[])
 	if (src_mac_control == 0) {
 		memcpy(ifr.ifr_name, iface, strlen(iface));
 		if (ioctl(sockfd, SIOCGIFHWADDR, &ifr) == -1)
-			err_msg("arp.c", "get_iface_mac", __LINE__, errno);
+			err_msg("arp.c", "inject_arp", __LINE__, errno);
 		
 		memcpy(src_mac, ifr.ifr_hwaddr.sa_data, 6);
 	}
@@ -146,6 +142,7 @@ void inject_arp(int argc, char *argv[])
 	memcpy(device.sll_addr, src_mac, 6);
 	device.sll_halen = 6;
 
+	set_eth(buffer, dst_mac, src_mac, ETH_P_ARP);
 	set_arp(buffer, src_mac, src_ip, dst_mac, dst_ip, oper);
 
 	len = sizeof(struct eth_hdr) + sizeof(struct arp_hdr);
