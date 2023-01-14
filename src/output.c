@@ -47,7 +47,10 @@ void print_arp(char *buffer)
 	printf("ARP target ip   : %u.%u.%u.%u\n",
 		arph->dst_ip[0] ,arph->dst_ip[1], arph->dst_ip[2], arph->dst_ip[3]);
 
-	printf("ARP operation   : %d\n", arph->oper);
+	printf("ARP operation   : ");
+	if (arph->oper == htons(1)) printf("request\n");
+	else if (arph->oper == htons(2)) printf("reply\n");
+	else printf("%d\n", arph->oper);
 }
 
 void print_ip(char *buffer)
