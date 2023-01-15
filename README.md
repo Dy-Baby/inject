@@ -20,8 +20,10 @@ Kormos is a raw socket packet crafter and injector.
 ### Example Usages
 * ETH packet :
     `./inject eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa`
+
 > send eth packet with a payload using file
-	`./inject eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa -a (file)`
+* ETH packet with data :
+    `./inject eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa -a (file)`
 
 * ARP packet :
     `./inject arp -i wlan0 -S 192.168.1.50 -D 192.168.1.1 -r 1`
