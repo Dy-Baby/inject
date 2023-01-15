@@ -1,7 +1,7 @@
-Inject
+Depocillin
 ---
 
-inject is a raw socket packet crafter and injector.
+Depocillin is a raw socket packet crafter and injector.
 
 ### Supported Protocols and Features
 - ETHERNET (MAC Addresses, Protocol, Payload)
