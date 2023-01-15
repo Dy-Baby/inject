@@ -4,7 +4,7 @@ KORMOS
 Kormos is a raw socket packet crafter and injector.
 
 ### Supported Protocols and Features
-- ETH (MAC Addresses, Protocol, Payload)
+- ETHERNET (MAC Addresses, Protocol, Payload)
 - ARP (MAC Addresses, IP Addresses, ARP operation)
 - IP (IP Adresses, TTL, Service)
 - ICMP (Type, Code)
