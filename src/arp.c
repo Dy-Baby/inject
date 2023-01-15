@@ -127,7 +127,7 @@ void inject_arp(int argc, char *argv[])
 	if (!dst_ip) err_exit("destination ip address not specified.");
 	if (!iface) err_exit("network interface not specified.");
 
-	if (src_mac_control == 0) {
+	if (!src_mac_control) {
 		memcpy(ifr.ifr_name, iface, strlen(iface));
 		if (ioctl(sockfd, SIOCGIFHWADDR, &ifr) == -1)
 			err_msg("arp.c", "inject_arp", __LINE__, errno);
@@ -135,7 +135,7 @@ void inject_arp(int argc, char *argv[])
 		memcpy(src_mac, ifr.ifr_hwaddr.sa_data, 6);
 	}
 
-	if (dst_mac_control == 0) memset(dst_mac, 0xff, 6);
+	if (!dst_mac_control) memset(dst_mac, 0xff, 6);
 
 	if ((device.sll_ifindex = if_nametoindex(iface)) == 0)
 		err_msg("arp.c", "inject_arp", __LINE__, errno);
