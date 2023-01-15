@@ -1,7 +1,7 @@
 Depocillin
 ---
 
-Depocillin is a raw socket packet crafter and depocillinor.
+Depocillin is a raw socket packet crafter and injector.
 
 ### Supported Protocols and Features
 - ETHERNET (MAC Addresses, Protocol, Payload)
@@ -18,11 +18,11 @@ Depocillin is a raw socket packet crafter and depocillinor.
     `make clean`
 
 ### Example Usages
-* ETH packet :
+* ETHERNET packet :
     `./depocillin eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa`
 
-> send eth packet with a payload using file
-* ETH packet with data :
+> send ethernet packet with a payload using file
+* ETHERNET packet with data :
     `./depocillin eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa -a (file)`
 
 * ARP packet :
