@@ -1,7 +1,7 @@
 Depocillin
 ---
 
-Depocillin is a raw socket packet crafter and injector.
+Depocillin is a raw socket packet crafter and depocillinor.
 
 ### Supported Protocols and Features
 - ETHERNET (MAC Addresses, Protocol, Payload)
@@ -19,35 +19,35 @@ Depocillin is a raw socket packet crafter and injector.
 
 ### Example Usages
 * ETH packet :
-    `./inject eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa`
+    `./depocillin eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa`
 
 > send eth packet with a payload using file
 * ETH packet with data :
-    `./inject eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa -a (file)`
+    `./depocillin eth -i wlan0 -M aa:bb:cc:dd:ee:ff -K ff:ee:dd:cc:bb:aa -a (file)`
 
 * ARP packet :
-    `./inject arp -i wlan0 -S 192.168.1.50 -D 192.168.1.1 -r 1`
+    `./depocillin arp -i wlan0 -S 192.168.1.50 -D 192.168.1.1 -r 1`
 
 * IP packet :
-    `./inject ip -S 192.168.1.50 -D 192.168.1.1`
+    `./depocillin ip -S 192.168.1.50 -D 192.168.1.1`
 
 * ICMP echo request :
-    `./inject icmp -S 192.168.1.50 -D 192.168.1.1 -t 8`
+    `./depocillin icmp -S 192.168.1.50 -D 192.168.1.1 -t 8`
 
 * TCP syn packet :
-     `./inject tcp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 80 -f syn`
+     `./depocillin tcp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 80 -f syn`
 
 > you can use multiple flags together
 * TCP syn, ack packet :
-     `./inject tcp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 80 -f syn -f ack`
+     `./depocillin tcp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 80 -f syn -f ack`
 
 > send tcp packet with a payload using file
 * TCP psh packet with data :
-     `./inject tcp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 80 -f psh -a (file)`
+     `./depocillin tcp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 80 -f psh -a (file)`
 
 * UDP packet :
-     `./inject udp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 4000`
+     `./depocillin udp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 4000`
 
 > send udp packet with a payload using file
 * UDP packet with data :
-     `./inject udp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 4000 -a (file)`
+     `./depocillin udp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 4000 -a (file)`

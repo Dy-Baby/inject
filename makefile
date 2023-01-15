@@ -3,7 +3,7 @@ CFLAGS = -Wall
 
 SOURCES = $(wildcard src/*.c)
 OBJECTS = $(SOURCES:.c=.o)
-TARGET = inject
+TARGET = depocillin
 
 $(TARGET) : $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^
