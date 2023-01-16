@@ -1,7 +1,7 @@
 Depocillin
 ---
 
-Depocillin is a raw socket packet crafter and injector.
+Depocillin is a raw socket packet crafter, injector and sniffer.
 
 ### Supported Protocols and Features
 - ETHERNET (MAC Addresses, Protocol, Payload)
@@ -11,7 +11,7 @@ Depocillin is a raw socket packet crafter and injector.
 - TCP (Ports, Flag, Payload)
 - UDP (Ports, Payload)
 
-- Packet sniffer
+- Packet sniffing
 
 ### Installation
 * For installation, go to the project directory and compile with : 
