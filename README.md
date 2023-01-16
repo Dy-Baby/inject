@@ -11,6 +11,8 @@ Depocillin is a raw socket packet crafter and injector.
 - TCP (Ports, Flag, Payload)
 - UDP (Ports, Payload)
 
+- Packet sniffer
+
 ### Installation
 * For installation, go to the project directory and compile with : 
     `make`
@@ -51,3 +53,6 @@ Depocillin is a raw socket packet crafter and injector.
 > send udp packet with a payload using file
 * UDP packet with data :
      `./depocillin udp -S 192.168.1.50 -D 192.168.1.1 -s 5000 -d 4000 -a (file)`
+
+* Sniff network :
+    `./depocillin sniff`
