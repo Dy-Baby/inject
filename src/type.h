@@ -4,6 +4,14 @@
 #define BUFF_SIZE 65535
 #define DEFAULT_TTL 248
 
+#define ETH_FLAG 1
+#define ARP_FLAG 2
+#define ICMP_FLAG 4
+#define IP_FLAG 8
+#define TCP_FLAG 16
+#define UDP_FLAG 32
+#define ALL 63
+
 struct eth_hdr {
 	unsigned char dst[6];
 	unsigned char src[6];
