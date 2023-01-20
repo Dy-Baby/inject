@@ -34,7 +34,7 @@ void print_arp(char *buffer)
 	struct arp_hdr *arph = (struct arp_hdr * )(buffer + sizeof(struct eth_hdr));
 	int ind;
 
-	printf("arp     | ");
+	printf("arp      | ");
 	for (ind = 0; ind < 5; ind += 1)
 		printf("%.2x:", arph->src_mac[ind]);
 	printf("%.2x", arph->src_mac[5]);
