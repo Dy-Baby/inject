@@ -59,8 +59,8 @@ void print_ip(char *buffer)
 	struct sockaddr_in src, dst;
 	struct ip_hdr *iph = (struct ip_hdr *)(buffer + sizeof(struct eth_hdr));
 
-	src.sin_addr.s_addr = iph->src;
-	dst.sin_addr.s_addr = iph->dst;
+	inet_pton(AF_INET, (const char *)iph->src, &src.sin_addr.s_addr);
+	inet_pton(AF_INET, (const char *)iph->src, &dst.sin_addr.s_addr);
 
 	printf("ip       | ");
 	printf("%s", inet_ntoa(src.sin_addr));

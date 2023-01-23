@@ -39,8 +39,8 @@ struct ip_hdr {
 	unsigned char ttl;
 	unsigned char protocol;
 	unsigned short check;
-	unsigned int src;
-	unsigned int dst;
+	unsigned char src[4];
+	unsigned char dst[4];
 };
 
 struct icmp_hdr {
@@ -71,8 +71,8 @@ struct udp_hdr {
 };
 
 struct psd_hdr {
-	unsigned int src;
-	unsigned int dst;
+	unsigned char src[4];
+	unsigned char dst[4];
 	unsigned char placeholder;
 	unsigned char protocol;
 	unsigned short length;

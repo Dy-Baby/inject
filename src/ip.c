@@ -17,13 +17,13 @@
 #include "get_addr.h"
 #include "checksum.h"
 
-static unsigned int src_addr, dst_addr;
+static unsigned char *src_addr = NULL, *dst_addr = NULL;
 static unsigned char ttl, service = 0;
 static int count = 1, verbose = 0;
 static char *iface = NULL;
 
 void set_ip(char *buffer, size_t payload_size,
-		unsigned int src, unsigned int dst, unsigned char ttl,
+		unsigned char src[4], unsigned char dst[4], unsigned char ttl,
 		unsigned char service, unsigned char protocol)
 {
 	struct ip_hdr *iph = (struct ip_hdr *)buffer;
@@ -49,8 +49,9 @@ void set_ip(char *buffer, size_t payload_size,
 	iph->ttl = (ttl) ? ttl : DEFAULT_TTL;
 	iph->protocol = protocol;
 	iph->check = 0;
-	iph->src = (src) ? src : get_address();
-	iph->dst = dst;
+	if (!src) inet_pton(AF_INET, (const char *)get_address, &src);
+	inet_pton(AF_INET, (const char *)src, &iph->src);
+	inet_pton(AF_INET, (const char *)dst, &iph->dst);
 	iph->check = checksum((unsigned short *)iph, iph->length);
 }
 
@@ -90,10 +91,10 @@ static void parser(int argc, char *argv[])
 		case 'h':
 			ip_usage();
 		case 'S':
-			src_addr = inet_addr(optarg);
+			src_addr = (unsigned char *)optarg;
 			break;
 		case 'D':
-			dst_addr = inet_addr(optarg);
+			dst_addr = (unsigned char *)optarg;
 			break;
 		case 'T':
 			ttl = atoi(optarg);
@@ -123,7 +124,7 @@ void inject_ip(int argc, char *argv[])
 	if (iface) bind_iface(sockfd, iface);
 
 	sock_dst.sin_family = AF_INET;
-	sock_dst.sin_addr.s_addr = dst_addr;
+	inet_pton(AF_INET, (const char *)dst_addr, &sock_dst.sin_addr.s_addr);
 
 	set_ip(buffer, 0, src_addr, dst_addr, ttl, service, 0);
 

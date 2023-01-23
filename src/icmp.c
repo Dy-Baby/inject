@@ -17,13 +17,12 @@
 #include "icmp.h"
 #include "checksum.h"
 
-static unsigned int src_addr, dst_addr;
+static unsigned char *src_addr = NULL, *dst_addr = NULL;
 static unsigned char ttl, service = 0, icmp_type, icmp_code;
 static int count = 1, verbose = 0;
 static char *iface = NULL;
 
-void set_icmp(char *buffer, unsigned char type,
-		unsigned char code, unsigned short seq)
+void set_icmp(char *buffer, unsigned char type, unsigned char code, unsigned short seq)
 {
 	struct icmp_hdr *icmph = (struct icmp_hdr *)
 		(buffer + sizeof(struct ip_hdr));
@@ -76,10 +75,10 @@ static void parser(int argc, char *argv[])
 		case 'h':
 			icmp_usage();
 		case 'S':
-			src_addr = inet_addr(optarg);
+			src_addr = (unsigned char *)optarg;
 			break;
 		case 'D':
-			dst_addr = inet_addr(optarg);
+			dst_addr = (unsigned char *)optarg;
 			break;
 		case 'T':
 			ttl = atoi(optarg);
@@ -115,7 +114,7 @@ void inject_icmp(int argc, char *argv[])
 	if (iface) bind_iface(sockfd, iface);
 
 	sock_dst.sin_family = AF_INET;
-	sock_dst.sin_addr.s_addr = dst_addr;
+	inet_pton(AF_INET, (const char *)dst_addr, &sock_dst.sin_addr.s_addr);
 
 	set_ip(buffer, 0, src_addr, dst_addr, ttl, service, IPPROTO_ICMP);
 	set_icmp(buffer, icmp_type, icmp_code, 0);

@@ -20,7 +20,7 @@
 #include "random.h"
 #include "checksum.h"
 
-static unsigned int src_addr, dst_addr;
+static unsigned char *src_addr = NULL, *dst_addr = NULL;
 static unsigned char ttl, service = 0, tcp_flag;
 static unsigned short src_port, dst_port;
 static int count = 1, verbose = 0;
@@ -34,8 +34,8 @@ static unsigned short tcp_check(struct ip_hdr *iph, struct tcp_hdr *tcph,
 	size_t psd_size;
 	unsigned short check;
 
-	psh.src = iph->src;
-	psh.dst = iph->dst;
+	inet_pton(AF_INET, (const char *)iph->src, &psh.src);
+	inet_pton(AF_INET, (const char *)iph->dst, &psh.dst);
 	psh.placeholder = 0;
 	psh.protocol = IPPROTO_TCP;
 	psh.length = htons(sizeof(struct tcp_hdr) + payload_size);
@@ -119,10 +119,10 @@ static void parser(int argc, char *argv[])
                 case 'h':
                         tcp_usage();
                 case 'S':
-                        src_addr = inet_addr(optarg);
+                        src_addr = (unsigned char *)optarg;
                         break;
                 case 'D':
-                        dst_addr = inet_addr(optarg);
+                        dst_addr = (unsigned char *)optarg;
                         break;
                 case 'T':
                         ttl = atoi(optarg);
@@ -171,7 +171,7 @@ void inject_tcp(int argc, char *argv[])
        if (iface) bind_iface(sockfd, iface);
 
        sock_dst.sin_family = AF_INET;
-       sock_dst.sin_addr.s_addr = dst_addr;
+       inet_pton(AF_INET, (const char *)dst_addr, &sock_dst.sin_addr.s_addr);
        sock_dst.sin_port = dst_port;
 
        if (file_name) {
