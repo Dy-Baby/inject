@@ -34,8 +34,9 @@ static unsigned short tcp_check(struct ip_hdr *iph, struct tcp_hdr *tcph,
 	size_t psd_size;
 	unsigned short check;
 
-	inet_pton(AF_INET, (const char *)iph->src, &psh.src);
-	inet_pton(AF_INET, (const char *)iph->dst, &psh.dst);
+	memcpy(psh.src, iph->src, 4);
+	memcpy(psh.dst, iph->dst, 4);
+
 	psh.placeholder = 0;
 	psh.protocol = IPPROTO_TCP;
 	psh.length = htons(sizeof(struct tcp_hdr) + payload_size);

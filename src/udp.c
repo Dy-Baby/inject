@@ -34,8 +34,9 @@ static unsigned short udp_check(struct ip_hdr *iph, struct udp_hdr *udph,
 	size_t psd_size;
 	unsigned short check;
 
-	inet_pton(AF_INET, (const char *)iph->src, &psh.src);
-	inet_pton(AF_INET, (const char *)iph->dst, &psh.dst);
+	memcpy(psh.src, iph->src, 4);
+	memcpy(psh.dst, iph->dst, 4);
+
 	psh.placeholder = 0;
 	psh.protocol = IPPROTO_UDP;
 	psh.length = htons(sizeof(struct udp_hdr) + payload_size);
