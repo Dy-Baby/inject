@@ -25,6 +25,18 @@ void general_usage()
 \t-v : verbose\n\
 \t-h : this help message\n");
 }
+
+void sniff_usage()
+{
+	printf("\n sniff options :\n\n\
+\t-e : ethernet\n\
+\t-a : arp\n\
+\t-i : ip\n\
+\t-c : icmp\n\
+\t-t : tcp\n\
+\t-u : udp\n");
+}
+
 void eth_usage()
 {
 	printf("\n ETH options :\n\n\

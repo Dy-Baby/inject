@@ -15,6 +15,7 @@
 #include "listen.h"
 #include "output.h"
 #include "error_func.h"
+#include "usage.h"
 
 static int flag = 0;
 
@@ -52,18 +53,13 @@ static void output_packet(char *buffer, int fl)
 	}
 }
 
-static void sniff_usage()
+static void usage()
 {
 	printf("\n general oprtion :\n\n\
 \t-h : this help message\n");
+	sniff_usage();
+	printf("\n");
 
-	printf("\n sniff options :\n\n\
-\t-e : ethernet\n\
-\t-a : arp\n\
-\t-i : ip\n\
-\t-c : icmp\n\
-\t-t : tcp\n\
-\t-u : udp\n\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -92,7 +88,7 @@ static void parser(int argc, char *argv[])
 			flag |= UDP_FLAG;
 			break;
 		case 'h':
-			sniff_usage();
+			usage();
 		case '?':
 			break;
 		}
