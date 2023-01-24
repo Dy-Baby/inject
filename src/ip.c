@@ -16,6 +16,7 @@
 #include "ip.h"
 #include "get_addr.h"
 #include "checksum.h"
+#include "usage.h"
 
 static unsigned char *src_addr = NULL, *dst_addr = NULL;
 static unsigned char ttl, service = 0;
@@ -55,19 +56,12 @@ void set_ip(char *buffer, size_t payload_size,
 	iph->check = checksum((unsigned short *)iph, iph->length);
 }
 
-static void ip_usage()
+static void usage()
 {
-	printf("\n general options :\n\n\
-\t-i [interface] : network interface\n\
-\t-c [count] : number of packets to send\n\
-\t-v : verbose\n\
-\t-h : this help message\n");
+	general_usage();
+	ip_usage();
+	printf("\n");
 
-	printf("\n IP options :\n\n\
-\t-S [address] : source address\n\
-\t-D [address] : destination address\n\
-\t-T [ttl] : ttl\n\
-\t-o [service] : type of service\n\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -75,7 +69,7 @@ static void parser(int argc, char *argv[])
 {
 	int opt;
 
-	if (argc < 3) ip_usage();
+	if (argc < 3) usage();
 
 	while ((opt = getopt(argc, argv, "i:c:vhS:D:T:o:")) != -1) {
 		switch (opt) {
@@ -89,7 +83,7 @@ static void parser(int argc, char *argv[])
 			verbose = 1;
 			break;
 		case 'h':
-			ip_usage();
+			usage();
 		case 'S':
 			src_addr = (unsigned char *)optarg;
 			break;

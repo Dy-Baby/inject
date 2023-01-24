@@ -23,6 +23,7 @@
 #include "type.h"
 #include "eth.h"
 #include "arp.h"
+#include "usage.h"
 
 static unsigned char src_mac[6], dst_mac[6];
 static unsigned char *src_ip = NULL, *dst_ip = NULL;
@@ -45,20 +46,12 @@ void set_arp(char *buffer, unsigned char *source_mac, unsigned char *source_ip,
 	inet_pton(AF_INET, (const char *)target_ip, &arph->dst_ip);
 }
 
-static void arp_usage()
+static void usage()
 {
-	printf("\n general options :\n\n\
-\t-i [interface] : network interface\n\
-\t-c [count] : number of packets to send\n\
-\t-v : verbose\n\
-\t-h : this help message\n");
+	general_usage();
+	arp_usage();
+	printf("\n");
 
-	printf("\n ARP options :\n\n\
-\t-M [mac address] : source mac address (in XX:XX:XX:XX:XX:XX format)\n\
-\t-K [mac address] : destination mac address (in XX:XX:XX:XX:XX:XX format)\n\
-\t-S [ip address] : source ip address\n\
-\t-D [ip address] : destination ip address\n\
-\t-r [operation] : ARP operation\n\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -66,7 +59,7 @@ static void parser(int argc, char *argv[])
 {
 	int opt;
 
-	if (argc < 3) arp_usage();
+	if (argc < 3) usage();
 
 	while ((opt = getopt(argc, argv, "i:c:vhM:K:S:D:r:")) != -1) {
 		switch (opt) {
@@ -80,7 +73,7 @@ static void parser(int argc, char *argv[])
 			verbose = 1;
 			break;
 		case 'h':
-			arp_usage();
+			usage();
 		case 'M':
 			sscanf(optarg, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
 				&src_mac[0], &src_mac[1], &src_mac[2],

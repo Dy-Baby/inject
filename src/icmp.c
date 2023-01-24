@@ -16,6 +16,7 @@
 #include "ip.h"
 #include "icmp.h"
 #include "checksum.h"
+#include "usage.h"
 
 static unsigned char *src_addr = NULL, *dst_addr = NULL;
 static unsigned char ttl, service = 0, icmp_type, icmp_code;
@@ -35,23 +36,13 @@ void set_icmp(char *buffer, unsigned char type, unsigned char code, unsigned sho
 	icmph->check = checksum((unsigned short *)icmph, sizeof(struct icmp_hdr));
 }
 
-static void icmp_usage()
+static void usage()
 {
-	printf("\n general options :\n\n\
-\t-i [interface] : network interface\n\
-\t-c [count] : number of packets to send\n\
-\t-v : verbose\n\
-\t-h : this help message\n");
+	general_usage();
+	ip_usage();
+	icmp_usage();
+	printf("\n");
 
-        printf("\n IP options :\n\n\
-\t-S [address] : source address\n\
-\t-D [address] : destination address\n\
-\t-T [ttl] : ttl\n\
-\t-o [service] : type of service\n");
-
-	printf("\n ICMP options :\n\n\
-\t-t [type] : icmp type\n\
-\t-C [code] : icmp code\n\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -59,7 +50,7 @@ static void parser(int argc, char *argv[])
 {
 	int opt;
 
-	if (argc < 3) icmp_usage();
+	if (argc < 3) usage();
 
 	while ((opt = getopt(argc, argv, "i:c:vhS:D:T:o:t:C:")) != -1) {
 		switch (opt) {
@@ -73,7 +64,7 @@ static void parser(int argc, char *argv[])
 			verbose = 1;
 			break;
 		case 'h':
-			icmp_usage();
+			usage();
 		case 'S':
 			src_addr = (unsigned char *)optarg;
 			break;

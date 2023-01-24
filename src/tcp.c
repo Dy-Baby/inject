@@ -19,6 +19,7 @@
 #include "tcp.h"
 #include "random.h"
 #include "checksum.h"
+#include "usage.h"
 
 static unsigned char *src_addr = NULL, *dst_addr = NULL;
 static unsigned char ttl, service = 0, tcp_flag;
@@ -78,25 +79,13 @@ void set_tcp(char *buffer, char *payload, size_t payload_size,
 	tcph->check = tcp_check(iph, tcph, payload, payload_size);
 }
 
-static void tcp_usage()
+static void usage()
 {
-        printf("\n general options :\n\n\
-\t-i [interface] : network interface\n\
-\t-c [count] : number of packets to send\n\
-\t-v : verbose\n\
-\t-h : this help message\n");
+	general_usage();
+	ip_usage();
+	tcp_usage();
+	printf("\n");
 
-        printf("\n IP options :\n\n\
-\t-S [address] : source address\n\
-\t-D [address] : destination address\n\
-\t-T [ttl] : ttl\n\
-\t-o [service] : type of service\n");
-
-	printf("\n TCP options :\n\n\
-\t-s [port] : source port\n\
-\t-d [port] : destination port\n\
-\t-f [flag] : tcp flag (syn, ack, psh, fin, rst, urg)\n\
-\t-a [file] : payload file\n\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -104,7 +93,7 @@ static void parser(int argc, char *argv[])
 {
         int opt;
 
-        if (argc < 3) tcp_usage();
+        if (argc < 3) usage();
 
         while ((opt = getopt(argc, argv, "i:c:vhS:D:T:o:s:d:f:a:")) != -1) {
                 switch (opt) {
@@ -118,7 +107,7 @@ static void parser(int argc, char *argv[])
                         verbose = 1;
                         break;
                 case 'h':
-                        tcp_usage();
+                        usage();
                 case 'S':
                         src_addr = (unsigned char *)optarg;
                         break;

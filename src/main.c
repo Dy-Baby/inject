@@ -13,30 +13,16 @@
 #include "udp.h"
 #include "get_addr.h"
 #include "listen.h"
-
-void print_usage()
-{
-	printf("\n usage : ./depocilin [protocols/modes] [options]\n\n\
- protocols :\n\
-\teth : eth packets\n\
-\tarp : arp packets\n\
-\tip : ip packets\n\
-\ticmp : icmp packets\n\
-\ttcp : tcp packets\n\
-\tudp : udp packets\n\n\
- modes : \n\
-\tsniff : sniff network\n\n\
- options :\n\
-\t-g : list avaliable interfaces\n\
-\t-h : this help message\n\n");
-	exit(EXIT_FAILURE);
-}
+#include "usage.h"
 
 void parser(int argc, char *argv[])
 {
 	int opt;
 
-	if (argc < 2) print_usage();
+	if (argc < 2) {
+		main_usage();
+		exit(EXIT_FAILURE);
+	}
 
 	if (!strcmp(argv[1], "sniff")) sniff_network(argc, argv);
 	if (!strcmp(argv[1], "eth")) inject_eth(argc, argv);
@@ -52,7 +38,8 @@ void parser(int argc, char *argv[])
 			list_interfaces();
 			break;
 		case 'h':
-			print_usage();
+			main_usage();
+			exit(EXIT_FAILURE);
 		}
 	}
 }

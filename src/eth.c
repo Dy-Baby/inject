@@ -23,6 +23,7 @@
 #include "output.h"
 #include "type.h"
 #include "eth.h"
+#include "usage.h"
 
 static unsigned char src_mac[6], dst_mac[6];
 static unsigned short protocol;
@@ -41,19 +42,12 @@ void set_eth(char *buffer, unsigned char *dst, unsigned char *src,
 	ethh->protocol = htons(proto);
 }
 
-static void eth_usage()
+static void usage()
 {
-	printf("\n general options :\n\n\
-\t-i [interface] : network interface\n\
-\t-c [count] : number of packets to send\n\
-\t-v : verbose\n\
-\t-h : this help message\n");
+	general_usage();
+	eth_usage();
+	printf("\n");
 
-	printf("\n ETH options :\n\n\
-\t-M [mac address] : source mac address (in XX:XX:XX:XX:XX:XX format)\n\
-\t-K [mac address] : destination mac address (in XX:XX:XX:XX:XX:XX format)\n\
-\t-p [protocol] : protocol\n\
-\t-a [file name] : payload file\n\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -61,7 +55,7 @@ static void parser(int argc, char *argv[])
 {
 	int opt;
 
-	if (argc < 3) eth_usage();
+	if (argc < 3) usage();
 
 	while ((opt = getopt(argc, argv, "i:c:vhM:K:p:a:")) != -1) {
 		switch (opt) {
@@ -75,7 +69,7 @@ static void parser(int argc, char *argv[])
 			verbose = 1;
 			break;
 		case 'h':
-			eth_usage();
+			usage();
 			break;
 		case 'M':
 			sscanf(optarg, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
