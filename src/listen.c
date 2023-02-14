@@ -55,7 +55,7 @@ static void output_packet(char *buffer, int fl)
 
 static void usage()
 {
-	printf("\n general oprtion :\n\n\
+	printf("\n general options :\n\n\
 \t-h : this help message\n");
 	sniff_usage();
 	printf("\n");
