@@ -56,16 +56,14 @@ void print_arp(char *buffer)
 
 void print_ip(char *buffer)
 {
-	struct sockaddr_in src, dst;
-	struct ip_hdr *iph = (struct ip_hdr *)(buffer + sizeof(struct eth_hdr));
-
-	inet_pton(AF_INET, (const char *)iph->src, &src.sin_addr.s_addr);
-	inet_pton(AF_INET, (const char *)iph->src, &dst.sin_addr.s_addr);
+	struct ip_hdr *iph = (struct ip_hdr *)buffer;
 
 	printf("ip       | ");
-	printf("%s", inet_ntoa(src.sin_addr));
+	printf("%u.%u.%u.%u",
+		iph->src[0], iph->src[1], iph->src[2], iph->src[3]);
 	printf(" --> ");
-	printf("%s ", inet_ntoa(dst.sin_addr));
+	printf("%u.%u.%u.%u ",
+		iph->dst[0], iph->dst[1], iph->dst[2], iph->dst[3]);
 	printf("proto:%d ", iph->protocol);
 	printf("tos:%d ", iph->service);
 	printf("ttl:%d ", iph->ttl);
@@ -77,7 +75,7 @@ void print_ip(char *buffer)
 void print_icmp(char *buffer)
 {
 	struct icmp_hdr *icmph = (struct icmp_hdr *)
-		(buffer + sizeof(struct eth_hdr) + sizeof(struct ip_hdr));
+		(buffer + sizeof(struct ip_hdr));
 
 	printf("icmp     | ");
 	printf("type:%d (", icmph->type);
@@ -107,7 +105,7 @@ void print_icmp(char *buffer)
 void print_tcp(char *buffer)
 {
 	struct tcp_hdr *tcph = (struct tcp_hdr *)
-		(buffer + sizeof(struct eth_hdr) + sizeof(struct ip_hdr));
+		(buffer + sizeof(struct ip_hdr));
 
 	printf("tcp      | ");
 	printf("%d --> %d ", htons(tcph->src), htons(tcph->dst));
@@ -126,7 +124,7 @@ void print_tcp(char *buffer)
 void print_udp(char *buffer)
 {
 	struct udp_hdr *udph = (struct udp_hdr *)
-		(buffer + sizeof(struct eth_hdr) + sizeof(struct ip_hdr));
+		(buffer + sizeof(struct ip_hdr));
 
 	printf("udp      | ");
 	printf("%d --> %d ", htons(udph->src), htons(udph->dst));
