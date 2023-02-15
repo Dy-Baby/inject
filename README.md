@@ -10,8 +10,7 @@ Inject is a raw socket packet crafter, injector and sniffer.
 - ICMP (Type, Code)
 - TCP (Ports, Flag, Payload)
 - UDP (Ports, Payload)
-
-- Packet sniffing
+- Packet sniffing (Ethernet, ARP, IP, ICMP, TCP, UDP)
 
 ### Installation
 * For installation, go to the project directory and compile with : 
