@@ -114,7 +114,9 @@ void inject_ip(int argc, char *argv[])
 	memset(buffer, 0, BUFF_SIZE);
 	memset(&sock_dst, 0, sizeof(struct sockaddr_in));
 
-	sockfd = init_socket();
+	if ((sockfd = init_socket()) == -1)
+		exit(EXIT_FAILURE);
+
 	if (iface) bind_iface(sockfd, iface);
 
 	sock_dst.sin_family = AF_INET;

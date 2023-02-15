@@ -110,15 +110,16 @@ void inject_arp(int argc, char *argv[])
 
 	parser(argc, argv);
 
+	if (!src_ip) err_exit("source ip address not specified.");
+	if (!dst_ip) err_exit("destination ip address not specified.");
+	if (!iface) err_exit("network interface not specified.");
+
 	memset(buffer, 0, BUFF_SIZE);
 	memset(&ifr, 0, sizeof(struct ifreq));
 	memset(&device, 0, sizeof(struct sockaddr_ll));
 
-	sockfd = init_packet_socket();
-
-	if (!src_ip) err_exit("source ip address not specified.");
-	if (!dst_ip) err_exit("destination ip address not specified.");
-	if (!iface) err_exit("network interface not specified.");
+	if ((sockfd = init_packet_socket()) == -1)
+		exit(EXIT_FAILURE);
 
 	if (!src_mac_control) {
 		memcpy(ifr.ifr_name, iface, strlen(iface));

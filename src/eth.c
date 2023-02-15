@@ -109,7 +109,8 @@ void inject_eth(int argc, char *argv[])
 	memset(&ifr, 0, sizeof(struct ifreq));
 	memset(&device, 0, sizeof(struct sockaddr_ll));
 
-	sockfd = init_packet_socket();
+	if ((sockfd = init_packet_socket()) == -1)
+		exit(EXIT_FAILURE);
 
 	if (!iface) err_exit("network interface not specified.");
 
