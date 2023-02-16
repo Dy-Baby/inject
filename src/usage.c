@@ -2,7 +2,7 @@
 
 void main_usage()
 {
-	printf("\n usage : ./depocilin [protocols/modes] [options]\n\n\
+	printf("\n usage : ./inject [protocols/modes] [options]\n\n\
  protocols :\n\
 \teth : eth packets\n\
 \tarp : arp packets\n\
